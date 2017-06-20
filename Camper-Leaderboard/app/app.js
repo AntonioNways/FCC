@@ -22,7 +22,8 @@ var App = React.createClass({
         <center><h1>Camper Leaderboard</h1></center>
         <div id="header"></div>
         <div className="container">
-          <div className="col-md-6">
+          <div className="col-md-12">
+            <TablePane/>
             {console.log(this.state.data)};
             {Object.keys(this.state.data)};
           </div>
@@ -32,5 +33,24 @@ var App = React.createClass({
   }
 });
 
+var TablePane = React.createClass({
+  render: function(){
+    return (
+      <table width="90%">
+        <thead>
+          <tr>
+            <th width="10%">Rank</th>
+            <th width="40%">Camper Name</th>
+            <th width="25%">Points in past 30 <days></days></th>
+            <th width="25%">All time points </th>
+          </tr>
+        </thead>
+        <tbody>
+          To be added
+        </tbody>
+      </table>
+    );
+  }
+});
 
 ReactDOM.render (<App />, document.getElementById("container"));
