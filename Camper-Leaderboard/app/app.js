@@ -1,34 +1,36 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var marked = require('marked');
+import $ from 'jquery';
 
 var App = React.createClass({
   getInitialState: function() {
     return { 
-      "text": "Heading\n=======\n\nSub-heading\n-----------\n\n### Another deeper heading\n \nParagraphs are separated\nby a blank line.\n\nLeave 2 spaces at the end of a line to do a  \nline break\n\nText attributes *italic*, **bold**, \n`monospace`, ~~strikethrough~~ .\n\nShopping list:\n\n  * apples\n  * oranges\n  * pears\n\nNumbered list:\n\n  1. apples\n  2. oranges\n  3. pears\n\nThe rain---not the reign---in\nSpain. \n\n *[Herman Fassett](https://freecodecamp.com/hermanfassett)*"
+      "data": {}
     };
   },
-  getMarkdownText(){
-    var raw = marked(this.state.text);
-    return {__html:raw}
+  getdata: function() {
+      $.get("https://fcctop100.herokuapp.com/api/fccusers/top/alltime", function(response){
+        this.setState({data:response});
+      }.bind(this));
   },
-  onChange: function(event){
-    this.setState({"text": event.target.value})
+  componentWillMount: function(){
+    this.getdata();
   },
   render : function() {
     return (
       <div>
-        <center><h1>Markdown Previewer</h1></center>
+        <center><h1>Camper Leaderboard</h1></center>
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6">
-            <textarea rows="33" id="area" onChange={this.onChange}>{this.state.text}</textarea>
+            {console.log(this.state.data)};
+            {Object.keys(this.state.data)};
           </div>
-          <div className="col-md-6" dangerouslySetInnerHTML={this.getMarkdownText()}></div>
         </div>
       </div>
     )
   }
 });
+
 
 ReactDOM.render (<App />, document.getElementById("container"));
