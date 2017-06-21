@@ -2,17 +2,17 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import $ from 'jquery';
 
-var recentPoint ="Points in past 30*";
+var recentPoint ="Points in past 30 days *";
 var allPoint = "All time points";
 
 function sortLeaderBy(type){
   if(type){
-    recentPoint ="Points in past 30*";
+    recentPoint ="Points in past 30 days *";
     allPoint = "All time points";
   }
   else{
-    recentPoint ="Points in past 30"; 
-    allPoint = "All time points*";
+    recentPoint ="Points in past 30 days"; 
+    allPoint = "All time points *";
   }
 }
 
