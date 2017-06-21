@@ -5,16 +5,23 @@ import $ from 'jquery';
 var App = React.createClass({
   getInitialState: function() {
     return { 
-      "data": {}
+      "data": {},
     };
   },
-  getdata: function() {
-      $.get("https://fcctop100.herokuapp.com/api/fccusers/top/alltime", function(response){
-        this.setState({"data":response});
-      }.bind(this));
+  getdata: function(type) {
+      if (type=="all"){
+        $.get("https://fcctop100.herokuapp.com/api/fccusers/top/alltime", function(response){
+          this.setState({"data":response});
+        }.bind(this));
+      }
+      else{
+        $.get("https://fcctop100.herokuapp.com/api/fccusers/top/recent", function(response){
+          this.setState({"data":response});
+        }.bind(this));        
+      }
   },
   componentWillMount: function(){
-    this.getdata();
+    this.getdata("recent");
   },
   render : function() {
     return (
@@ -23,7 +30,17 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-12">
-            <TablePane data={this.state.data}/>
+            <table width="90%">
+              <thead>
+                <tr>
+                  <th width="10%">Rank</th>
+                  <th width="40%">Camper Name</th>
+                  <th width="25%"><a onClick={function(){this.getdata("recent")}.bind(this)}>Points in past 30</a></th>
+                  <th width="25%"><a onClick={function(){this.getdata("all")}.bind(this)}>All time points </a></th>
+                </tr>
+              </thead>
+                <TablePane data={this.state.data}/>
+            </table>
           </div>
         </div>
       </div>
@@ -44,19 +61,9 @@ var TablePane = React.createClass({
   },
   render: function(){
     return (
-      <table width="90%">
-        <thead>
-          <tr>
-            <th width="10%">Rank</th>
-            <th width="40%">Camper Name</th>
-            <th width="25%">Points in past 30</th>
-            <th width="25%">All time points </th>
-          </tr>
-        </thead>
         <tbody>
           {Object.keys(this.props.data).map(this.renderTableInfoPane)}
         </tbody>
-      </table>
     );
   }
 });
