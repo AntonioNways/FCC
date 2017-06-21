@@ -23,3 +23,13 @@ tr:nth-child(odd) {
 #usernameinfo{
     vertical-align: middle;
 }
+
+a {
+  color: antiquewhite;
+  cursor: default;
+}
+a:hover {
+  color: antiquewhite;
+  border: none;
+
+}
