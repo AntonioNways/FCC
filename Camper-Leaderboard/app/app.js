@@ -44,7 +44,7 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-12">
-            <table width="90%">
+            <table width="100%">
               <thead>
                 <tr>
                   <th width="15%">Rank</th>
@@ -67,7 +67,7 @@ var TablePane = React.createClass({
     return (
           <tr key={rank}>
             <td><center>{Number(rank)+1}</center></td>
-            <td><img src={this.props.data[rank].img} height="42" width="42"/>{this.props.data[rank].username}</td>
+            <td id="usernameinfo"><img src={this.props.data[rank].img} height="42" width="42"/>{this.props.data[rank].username}</td>
             <td><center>{this.props.data[rank].recent}</center></td>
             <td><center>{this.props.data[rank].alltime}</center></td>
           </tr>
