@@ -19,10 +19,16 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6">
-            <RecipeList recipe={this.state.recipe}/>
-            <button type="button" id="myButton" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
-                Loading state
-</button>
+            <table width="100%">
+              <thead>
+                <tr>
+                  <th width="15%"><h2>Recipe</h2></th>
+                </tr>
+              </thead> 
+                <RecipeList recipe={this.state.recipe}/>
+            </table>
+            
+            
             {console.log(this.state)}
           </div>
           <div className="col-md-6"></div>
@@ -33,9 +39,19 @@ var App = React.createClass({
 });
 
 var RecipeList = React.createClass({
+  renderTableInfoPane: function(recipe){
+    return (
+          <tr key={recipe}>
+            <td><h4>{recipe}</h4>
+              <button type="button" className="btn btn-info">Recipe</button>{" "}
+              <button type="button" className="btn btn-warning">Edit</button>{" "}
+              <button type="button" className="btn btn-danger">Delete</button></td>
+          </tr>
+    );
+  },
   render: function() {
     return (
-      <p>{Object.keys(this.props.recipe)}</p>
+      <tbody>{Object.keys(this.props.recipe).map(this.renderTableInfoPane)}</tbody>
     )
   }
 });
