@@ -20,6 +20,9 @@ var App = React.createClass({
         <div className="container">
           <div className="col-md-6">
             <RecipeList recipe={this.state.recipe}/>
+            <button type="button" id="myButton" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+                Loading state
+</button>
             {console.log(this.state)}
           </div>
           <div className="col-md-6"></div>
