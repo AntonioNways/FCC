@@ -1,31 +1,38 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var initialRecipe = {"recipe":{"Bread Pudding":{"ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt. 6 slices of bread","instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan., 3.Bake uncovered for 40 to 45 minutes " },"Bread Pudding2":{"ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt. 6 slices of bread","instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan., 3.Bake uncovered for 40 to 45 minutes " }}}
+
 var App = React.createClass({
   getInitialState: function() {
     return { 
-      "text": "Heading\n=======\n\nSub-heading\n-----------\n\n### Another deeper heading\n \nParagraphs are separated\nby a blank line.\n\nLeave 2 spaces at the end of a line to do a  \nline break\n\nText attributes *italic*, **bold**, \n`monospace`, ~~strikethrough~~ .\n\nShopping list:\n\n  * apples\n  * oranges\n  * pears\n\nNumbered list:\n\n  1. apples\n  2. oranges\n  3. pears\n\nThe rain---not the reign---in\nSpain. \n\n *[Herman Fassett](https://freecodecamp.com/hermanfassett)*"
+      "recipe":{}   
     };
   },
-  getMarkdownText(){
-    var raw = marked(this.state.text);
-    return {__html:raw}
-  },
-  onChange: function(event){
-    this.setState({"text": event.target.value})
+  componentWillMount: function(){
+    this.setState(initialRecipe);
   },
   render : function() {
     return (
       <div>
-        <center><h1>Markdown Previewer</h1></center>
+        <center><h1>Recipe Box</h1></center>
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6">
-            <textarea rows="33" id="area" onChange={this.onChange}>{this.state.text}</textarea>
+            <RecipeList recipe={this.state.recipe}/>
+            {console.log(this.state)}
           </div>
-          <div className="col-md-6" dangerouslySetInnerHTML={this.getMarkdownText()}></div>
+          <div className="col-md-6"></div>
         </div>
       </div>
+    )
+  }
+});
+
+var RecipeList = React.createClass({
+  render: function() {
+    return (
+      <p>{Object.keys(this.props.recipe)}</p>
     )
   }
 });
