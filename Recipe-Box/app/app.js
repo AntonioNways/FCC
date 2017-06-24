@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var initialRecipe = {"recipe":{"Bread Pudding":{"ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt. 6 slices of bread","instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan. 3.Bake uncovered for 40 to 45 minutes " },"Mac and cheese":{"ingredients":"4 cups/1L full cream milk, 2 cups macaroni, 2 cups cheddar cheese","instructions": "1.Place milk into a small saucepan and bring to the boil over a medium heat. 2.Add the pasta and return to the boil, reduce heat to simmer for 8 minutes. 3. Stir through cheese and leave to sit for 2 minutes." }}};
+var initialRecipe = {"recipe":{"Bread Pudding":{"Ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt, 6 slices of bread.","Instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan. 3.Bake uncovered for 40 to 45 minutes " },"Mac and cheese":{"Ingredients":"4 cups/1L full cream milk, 2 cups macaroni, 2 cups cheddar cheese","Instructions": "1.Place milk into a small saucepan and bring to the boil over a medium heat. 2.Add the pasta and return to the boil, reduce heat to simmer for 8 minutes. 3. Stir through cheese and leave to sit for 2 minutes." }}};
 var temp="";
 
 var App = React.createClass({
@@ -17,8 +17,8 @@ var App = React.createClass({
   setSelectRecipe: function(recipe_index){
     this.setState({
       selectRecipe: {"name": recipe_index,
-        "ingredients":this.state.recipe[recipe_index].ingredients,
-    "instructions":this.state.recipe[recipe_index].instructions}
+        "Ingredients":this.state.recipe[recipe_index].Ingredients,
+    "Instructions":this.state.recipe[recipe_index].Instructions}
     });
   },
   render : function() {
@@ -35,10 +35,8 @@ var App = React.createClass({
                 </tr>
               </thead> 
                 <RecipeList recipe={this.state.recipe} setSelectRecipe={this.setSelectRecipe}/>
-            </table>
+            </table>          
             
-            
-            {console.log(this.state)}
           </div>
           <div className="col-md-6 col-xs-6">          
             <RecipeDetailPane selectRecipe={this.state.selectRecipe}/>
@@ -63,7 +61,6 @@ var RecipeList = React.createClass({
 var RecipeItem = React.createClass({
   setSelected: function(){
     this.props.setSelectRecipe(this.props.name);
-    console.log(this.state);
   },
   render: function(){
     return (
@@ -79,18 +76,25 @@ var RecipeItem = React.createClass({
 });
 
 var RecipeDetailPane = React.createClass({
+  displayDetails: function(){
+
+  },
   render: function(){
     return (
       <table width="100%">
         <thead>
           <tr>
-            <th width="15%"><h2>{this.props.name}{console.log(this.props.recipe)}</h2></th>
+            <th width="15%"><h2>{this.props.selectRecipe.name}{console.log(this.props)}</h2></th>
           </tr>
           <tr key={this.props.selectRecipe}>
-            <td><h2></h2>
-              <button type="button" className="btn btn-info" >Recipe</button>{" "}
-              <button type="button" className="btn btn-warning">Edit</button>{" "}
-              <button type="button" className="btn btn-danger">Delete</button></td>
+            <td><h3>{Object.keys(this.props.selectRecipe)[1]}</h3>
+              <p>{this.props.selectRecipe.Ingredients}</p>
+            </td>
+            </tr>
+            <tr>
+            <td><h3>{Object.keys(this.props.selectRecipe)[2]}</h3>
+              <p>{this.props.selectRecipe.Instructions}</p>
+            </td>
           </tr>
         </thead> 
       </table>
