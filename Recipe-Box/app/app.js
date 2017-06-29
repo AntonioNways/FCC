@@ -60,7 +60,7 @@ var App = React.createClass({
   },
   renderType(){
     if(this.state.type==="Edit"){
-      return (<EditRecipePane editRecipe={this.state.editRecipe} editChange={this.editChange}/>);
+      return (<EditRecipePane editRecipe={this.state.editRecipe} setSelectRecipe={this.setSelectRecipe} editChange={this.editChange}/>);
     } 
     if(this.state.type==="View"){
       return (<RecipeDetailPane selectRecipe={this.state.selectRecipe}/>);
@@ -169,7 +169,7 @@ var EditRecipePane = React.createClass({
     console.log(this.props.editRecipe);
   },
   CancelEdit:function(){
-    console.log(this.props.editRecipe);
+    this.props.setSelectRecipe(this.props.editRecipe.name, "View");
   },
   render: function(){
     return (
@@ -189,7 +189,7 @@ var EditRecipePane = React.createClass({
           </tr>
           <tr>
             <td>
-            <button type="button" className="btn btn-danger pull-right" id="editButton">Cancel</button>{" "}
+            <button type="button" onClick={this.CancelEdit} className="btn btn-danger pull-right" id="editButton">Cancel</button>{" "}
             <button type="button" onClick={this.SaveEdit} className="btn btn-success pull-right" id="editButton">Save</button>
             </td>
           </tr>
