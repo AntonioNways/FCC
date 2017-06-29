@@ -1,4 +1,18 @@
-#area{
-  max-width: 100%;
-  min-width: 100%;
+#textIngredients{
+  max-width: 98%;
+  min-width: 98%;
+}
+#textInstruction{
+  max-width: 98%;
+  min-width: 98%;
+}
+textarea{
+  resize: none;
+}
+#detailBox{
+  border: 1px solid black;
+  padding-bottom: 10px;
+}
+#editButton{
+  margin-right: 5px;
 }
