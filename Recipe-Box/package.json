@@ -23,6 +23,7 @@
     "marked": "^0.3.6",
     "react": "^15.0.2",
     "react-addons-pure-render-mixin": "^15.0.2",
+    "react-bootstrap": "^0.31.0",
     "react-dom": "^15.0.2",
     "react-router": "^2.4.0",
     "restify": "^4.0.4"

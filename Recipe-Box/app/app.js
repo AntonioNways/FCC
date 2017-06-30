@@ -1,8 +1,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Modal= require('react-bootstrap').Modal;
 
 var initialRecipe = {"recipe":{"Bread Pudding":{"Ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt, 6 slices of bread.","Instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan. 3.Bake uncovered for 40 to 45 minutes " },"Mac and cheese":{"Ingredients":"4 cups/1L full cream milk, 2 cups macaroni, 2 cups cheddar cheese","Instructions": "1.Place milk into a small saucepan and bring to the boil over a medium heat. 2.Add the pasta and return to the boil, reduce heat to simmer for 8 minutes. 3. Stir through cheese and leave to sit for 2 minutes." }}};
-
 
 var App = React.createClass({
   getInitialState: function() {
@@ -11,6 +11,7 @@ var App = React.createClass({
       "selectRecipe":{},
       "editRecipe":{},
       "type": "",
+      isModalOpen: false
     };
   },
   componentWillMount: function(){
@@ -19,14 +20,10 @@ var App = React.createClass({
   setSelectRecipe: function(recipe_index,type){
     this.setState({type :type});
     if(type==="Delete"){
-    this.setState({
-      selectRecipe: {}
-    });
+      this.setState({ isModalOpen: true });
+      this.setState({ editRecipe: recipe_index});
     }
     if(type==="Edit"){
-      this.setState({
-        selectRecipe: {}
-      });
       this.setState({
           editRecipe: {
           "name": recipe_index,
@@ -41,12 +38,9 @@ var App = React.createClass({
           "Ingredients":this.state.recipe[recipe_index].Ingredients,
           "Instructions":this.state.recipe[recipe_index].Instructions}
       });
-      this.setState({
-        editRecipe: {}
-      });
     }
     else{
-      console.log("No type")
+      console.log("No type");
     }
     console.log(this.state);
   },
@@ -58,9 +52,15 @@ var App = React.createClass({
             "Instructions":inst}
         });
   },
+  renderChanges: function(){
+    var tempValue = Object.assign({},this.state.recipe);
+    tempValue[this.state.editRecipe.name].Ingredients = this.state.editRecipe.Ingredients;
+    tempValue[this.state.editRecipe.name].Instructions = this.state.editRecipe.Instructions;
+    console.log(this.state.recipe);
+  },
   renderType(){
     if(this.state.type==="Edit"){
-      return (<EditRecipePane editRecipe={this.state.editRecipe} setSelectRecipe={this.setSelectRecipe} editChange={this.editChange}/>);
+      return (<EditRecipePane editRecipe={this.state.editRecipe} renderChanges={this.renderChanges} setSelectRecipe={this.setSelectRecipe} editChange={this.editChange}/>);
     } 
     if(this.state.type==="View"){
       return (<RecipeDetailPane selectRecipe={this.state.selectRecipe}/>);
@@ -70,12 +70,15 @@ var App = React.createClass({
    }
   },
   renderBorder(){
-    if(this.state.type===""){
+    if(this.state.type===""||this.state.type==="Delete"){
       return "NoBorder";
     }
     else{
       return "detailBox";
     }
+  },
+  closeModal: function() {
+    this.setState({ isModalOpen: false })
   },
   render: function() {
     return (
@@ -92,13 +95,15 @@ var App = React.createClass({
               </thead> 
                 <RecipeList recipe={this.state.recipe} setSelectRecipe={this.setSelectRecipe} />
             </table>          
-            
           </div>
           <div className="col-md-6 col-xs-6" id={this.renderBorder()}>
             <table width="100%">
             {this.renderType()}
             </table>
           </div>
+          <div>
+            <ModalPane isModalOpen={this.state.isModalOpen} editRecipe={this.state.editRecipe} closeModal={this.closeModal}/>
+            </div>
         </div>
       </div>
     )
@@ -123,13 +128,16 @@ var RecipeItem = React.createClass({
   editRecipe:function(){
     this.props.setSelectRecipe(this.props.name, "Edit");
   },
+  deleteRecipe:function(){
+    this.props.setSelectRecipe(this.props.name, "Delete");
+  },
   render: function(){
     return (
           <tr key={this.props.name}>
             <td><h4>{this.props.name}</h4>
               <button type="button" className="btn btn-info" onClick={this.viewRecipe}>Recipe</button>{" "}
               <button type="button" className="btn btn-warning" onClick={this.editRecipe}>Edit</button>{" "}
-              <button type="button" className="btn btn-danger">Delete</button></td>
+              <button type="button" className="btn btn-danger" onClick={this.deleteRecipe}>Delete</button></td>
           </tr>
     );
   },
@@ -166,7 +174,8 @@ var EditRecipePane = React.createClass({
       this.props.editChange(this.props.editRecipe.name, this.props.editRecipe.Ingredients, event.target.value);
   },
   SaveEdit:function(){
-    console.log(this.props.editRecipe);
+    this.props.renderChanges();
+    this.props.setSelectRecipe(this.props.editRecipe.name, "View");
   },
   CancelEdit:function(){
     this.props.setSelectRecipe(this.props.editRecipe.name, "View");
@@ -198,5 +207,24 @@ var EditRecipePane = React.createClass({
   },
 });
 
+var ModalPane = React.createClass({
+    render: function(){
+    let close = () => this.props.closeModal();
+    return (
+      <Modal show={this.props.isModalOpen} onHide={close} bsSize="small">
+        <Modal.Header>
+          <Modal.Title id="contained-modal-title">{this.props.editRecipe}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <center>Would you like to delete this recipe?</center>
+        </Modal.Body>
+        <Modal.Footer> <center>
+          <button type="button" className="btn btn-primary">Yes</button>{" "}
+          <button type="button" className="btn btn-primary">No</button> </center>
+        </Modal.Footer>
+      </Modal>
+    );
+  },
+});
 
 ReactDOM.render (<App />, document.getElementById("container"));
