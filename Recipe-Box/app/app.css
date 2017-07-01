@@ -16,3 +16,8 @@ textarea{
 #editButton{
   margin-right: 5px;
 }
+#deleteButton{
+  width: 50px;
+  margin-right: 5px;
+  margin-left: 5px;
+}

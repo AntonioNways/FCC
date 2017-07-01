@@ -58,6 +58,13 @@ var App = React.createClass({
     tempValue[this.state.editRecipe.name].Instructions = this.state.editRecipe.Instructions;
     console.log(this.state.recipe);
   },
+  renderDelete: function(delete_recipe){
+    var tempDel = Object.assign({},this.state.recipe);
+    delete tempDel[delete_recipe];
+    this.setState({ recipe: tempDel });
+    console.log(tempDel);
+    this.setState({ isModalOpen: false })
+  },
   renderType(){
     if(this.state.type==="Edit"){
       return (<EditRecipePane editRecipe={this.state.editRecipe} renderChanges={this.renderChanges} setSelectRecipe={this.setSelectRecipe} editChange={this.editChange}/>);
@@ -102,7 +109,7 @@ var App = React.createClass({
             </table>
           </div>
           <div>
-            <ModalPane isModalOpen={this.state.isModalOpen} editRecipe={this.state.editRecipe} closeModal={this.closeModal}/>
+            <ModalPane isModalOpen={this.state.isModalOpen} editRecipe={this.state.editRecipe} closeModal={this.closeModal} renderDelete={this.renderDelete}/>
             </div>
         </div>
       </div>
@@ -208,6 +215,9 @@ var EditRecipePane = React.createClass({
 });
 
 var ModalPane = React.createClass({
+    ConfirmDelete:function(){
+      this.props.renderDelete(this.props.editRecipe);
+    },
     render: function(){
     let close = () => this.props.closeModal();
     return (
@@ -219,8 +229,8 @@ var ModalPane = React.createClass({
           <center>Would you like to delete this recipe?</center>
         </Modal.Body>
         <Modal.Footer> <center>
-          <button type="button" className="btn btn-primary">Yes</button>{" "}
-          <button type="button" className="btn btn-primary">No</button> </center>
+          <button type="button" className="btn btn-primary" onClick={this.ConfirmDelete} id="deleteButton">Yes</button>
+          <button type="button" className="btn btn-primary" onClick={close} id="deleteButton">No</button> </center>
         </Modal.Footer>
       </Modal>
     );
