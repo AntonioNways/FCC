@@ -58,12 +58,29 @@ var App = React.createClass({
     tempValue[this.state.editRecipe.name].Instructions = this.state.editRecipe.Instructions;
     console.log(this.state.recipe);
   },
+  renderAddRecipe: function(){
+    var tempRecipe = Object.assign({},this.state.recipe);
+    tempRecipe[this.state.editRecipe.name] = {};
+    tempRecipe[this.state.editRecipe.name].Ingredients = this.state.editRecipe.Ingredients;
+    tempRecipe[this.state.editRecipe.name].Instructions = this.state.editRecipe.Instructions;
+    this.setState({ recipe: tempRecipe });
+    console.log(this.state);
+  },
   renderDelete: function(delete_recipe){
     var tempDel = Object.assign({},this.state.recipe);
     delete tempDel[delete_recipe];
     this.setState({ recipe: tempDel });
     console.log(tempDel);
     this.setState({ isModalOpen: false })
+  },
+  renderAdd: function(){
+    this.setState({
+      editRecipe: {
+        "name": "",
+        "Ingredients":"",
+        "Instructions":""}
+    }); 
+    this.setState({ type: "Add" });
   },
   renderType(){
     if(this.state.type==="Edit"){
@@ -72,12 +89,15 @@ var App = React.createClass({
     if(this.state.type==="View"){
       return (<RecipeDetailPane selectRecipe={this.state.selectRecipe}/>);
    }
+    if(this.state.type==="Add"){
+      return (<AddRecipePane editRecipe={this.state.editRecipe} editChange={this.editChange} renderAddRecipe={this.renderAddRecipe} setSelectRecipe={this.setSelectRecipe}/>);
+   }
    else{
      console.log("TBC")
    }
   },
   renderBorder(){
-    if(this.state.type===""||this.state.type==="Delete"){
+    if(this.state.type===""||this.state.type==="Delete"||this.state.type==="Add"){
       return "NoBorder";
     }
     else{
@@ -97,7 +117,7 @@ var App = React.createClass({
             <table width="100%">
               <thead>
                 <tr>
-                  <th width="15%"><h2>Recipe</h2></th>
+                  <th><h2>Recipe <button type="button" className="btn btn-success" onClick={this.renderAdd}>Add + </button></h2></th>
                 </tr>
               </thead> 
                 <RecipeList recipe={this.state.recipe} setSelectRecipe={this.setSelectRecipe} />
@@ -195,7 +215,7 @@ var EditRecipePane = React.createClass({
           </tr>
           <tr key={this.props.editRecipe}>
             <td><h3>{Object.keys(this.props.editRecipe)[1]}</h3>
-              <textarea rows="3" name="test" id="textIngredients" onChange={this.IngredientsChange} value={this.props.editRecipe.Ingredients}></textarea>
+              <textarea rows="3" id="textIngredients" onChange={this.IngredientsChange} value={this.props.editRecipe.Ingredients}></textarea>
             </td>
             </tr>
             <tr>
@@ -207,6 +227,61 @@ var EditRecipePane = React.createClass({
             <td>
             <button type="button" onClick={this.CancelEdit} className="btn btn-danger pull-right" id="editButton">Cancel</button>{" "}
             <button type="button" onClick={this.SaveEdit} className="btn btn-success pull-right" id="editButton">Save</button>
+            </td>
+          </tr>
+      </thead>
+    );
+  },
+});
+
+var AddRecipePane = React.createClass({
+  AddName: function(event){;
+    this.props.editChange(event.target.value, this.props.editRecipe.Ingredients,this.props.editRecipe.Instructions);
+  },
+  AddIngredients: function(event){;
+    this.props.editChange(this.props.editRecipe.name, event.target.value,this.props.editRecipe.Instructions);
+  },
+  AddInstructions: function(event){;
+    this.props.editChange(this.props.editRecipe.name, this.props.editRecipe.Ingredients, event.target.value);
+  },
+  SaveAdd:function(){
+    if(this.props.editRecipe.name==""||this.props.editRecipe.Ingredients==""||this.props.editRecipe.Instructions==""){
+      console.log("Missing input info");
+      console.log(this.props.editRecipe);
+    }
+    else{
+      this.props.renderAddRecipe();
+      this.props.setSelectRecipe(this.props.editRecipe.name, "");
+    }
+  },
+  CancelAdd:function(){
+    this.props.setSelectRecipe("", "");
+  },
+  render: function(){
+    return (
+      <thead>
+          <tr>
+            <th width="15%"><h2>Add Recipe</h2></th>
+          </tr>
+          <tr key={this.props.editRecipe}>
+            <td><h3>Recipe Name</h3>
+              <textarea rows="1" id="textIngredients" onChange={this.AddName} value={this.props.editRecipe.name}></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td><h3>Ingredients</h3>
+              <textarea rows="3" id="textIngredients" onChange={this.AddIngredients} value={this.props.editRecipe.Ingredients}></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td><h3>Instructions</h3>
+              <textarea rows="5" id="textInstruction" onChange={this.AddInstructions} value={this.props.editRecipe.Instructions}></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <button type="button" onClick={this.CancelAdd} className="btn btn-danger pull-right" id="editButton">Cancel</button>{" "}
+            <button type="button" onClick={this.SaveAdd} className="btn btn-success pull-right" id="editButton">Save</button>
             </td>
           </tr>
       </thead>
