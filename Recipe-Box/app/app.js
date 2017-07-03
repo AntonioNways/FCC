@@ -2,7 +2,16 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Modal= require('react-bootstrap').Modal;
 
-var initialRecipe = {"recipe":{"Bread Pudding":{"Ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt, 6 slices of bread.","Instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan. 3.Bake uncovered for 40 to 45 minutes " },"Mac and cheese":{"Ingredients":"4 cups/1L full cream milk, 2 cups macaroni, 2 cups cheddar cheese","Instructions": "1.Place milk into a small saucepan and bring to the boil over a medium heat. 2.Add the pasta and return to the boil, reduce heat to simmer for 8 minutes. 3. Stir through cheese and leave to sit for 2 minutes." }}};
+//get recipe from storage//
+var initialRecipe = {};
+
+if(JSON.parse(window.localStorage.getItem('_Antonio_recipes'))===null){
+  initialRecipe = {"recipe":{"Bread Pudding":{"Ingredients":"2 cups milk, 1/4 cup butter or margarine, 2 eggs, 1/2 cup sugar, cinnamon, 1/4 teaspoon salt, 6 slices of bread.","Instructions": "1. Heat oven to 350ºF. In 2-quart saucepan, heat milk and butter over medium heat until butter is melted and milk is hot. 2.Mix eggs, sugar, cinnamon and salt. Stir in bread cubes. Stir in milk mixture. Pour into ungreased deep round pan. 3.Bake uncovered for 40 to 45 minutes " },"Mac and cheese":{"Ingredients":"4 cups/1L full cream milk, 2 cups macaroni, 2 cups cheddar cheese","Instructions": "1.Place milk into a small saucepan and bring to the boil over a medium heat. 2.Add the pasta and return to the boil, reduce heat to simmer for 8 minutes. 3. Stir through cheese and leave to sit for 2 minutes." }}};
+}
+else{
+  initialRecipe = {"recipe":JSON.parse(window.localStorage.getItem('_Antonio_recipes'))};
+}
+console.log(initialRecipe)
 
 var App = React.createClass({
   getInitialState: function() {
@@ -64,6 +73,7 @@ var App = React.createClass({
     tempRecipe[this.state.editRecipe.name].Ingredients = this.state.editRecipe.Ingredients;
     tempRecipe[this.state.editRecipe.name].Instructions = this.state.editRecipe.Instructions;
     this.setState({ recipe: tempRecipe });
+    window.localStorage.setItem('_Antonio_recipes',JSON.stringify(tempRecipe));
     console.log(this.state);
   },
   renderDelete: function(delete_recipe){
@@ -71,6 +81,7 @@ var App = React.createClass({
     delete tempDel[delete_recipe];
     this.setState({ recipe: tempDel });
     console.log(tempDel);
+    window.localStorage.setItem('_Antonio_recipes',JSON.stringify(tempDel));
     this.setState({ isModalOpen: false })
   },
   renderAdd: function(){
