@@ -9,9 +9,9 @@ for (var i=0;i<blankboard.length;i++){
   blankboard[i]=new Array(5);
 }
 function resetboard(board){
-  for(var x=0;x<board.length;x++){
-    for(var y=0;y<board[x].length;y++){
-      board[x][y]="dead";
+  for(var i=0;i<board.length;i++){
+    for(var j=0;j<board[j].length;j++){
+      board[i][j]="dead";
     }
   }
 }
@@ -32,6 +32,7 @@ var App = React.createClass({
     if(tempValue[x][y]=="dead"){
       tempValue[x][y]="alive";
       this.setState({ "board": tempValue });
+      console.log(x);
       return
     }
     if(tempValue[x][y]=="alive"){
@@ -42,7 +43,6 @@ var App = React.createClass({
     else{
       console.log("ClickChangeCell Error");
     }
-    console.log(tempValue[x][y]);
   },
   render: function() {
     return (
