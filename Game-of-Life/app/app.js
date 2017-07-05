@@ -3,14 +3,16 @@ var ReactDOM = require('react-dom');
 var Modal= require('react-bootstrap').Modal;
 
 var rowId;
+var gwidth=16; //set the grids' gwidth
+var gHeight=8; //set the grids' length
 
-var blankboard = new Array(10);
-for (var i=0;i<blankboard.length;i++){
-  blankboard[i]=new Array(5);
+var blankboard = new Array(gHeight);
+for (var i=0;i<gHeight;i++){
+  blankboard[i]=new Array(gwidth);
 }
 function resetboard(board){
-  for(var i=0;i<board.length;i++){
-    for(var j=0;j<board[j].length;j++){
+  for(var i=0;i<gHeight;i++){
+    for(var j=0;j<gwidth;j++){
       board[i][j]="dead";
     }
   }
@@ -32,7 +34,6 @@ var App = React.createClass({
     if(tempValue[x][y]=="dead"){
       tempValue[x][y]="alive";
       this.setState({ "board": tempValue });
-      console.log(x);
       return
     }
     if(tempValue[x][y]=="alive"){
