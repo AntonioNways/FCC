@@ -3,13 +3,15 @@ var ReactDOM = require('react-dom');
 var Modal= require('react-bootstrap').Modal;
 
 var rowId;
-var gwidth=16; //set the grids' gwidth
+var gwidth=17; //set the grids' gwidth
 var gHeight=8; //set the grids' length
 
+//setting board
 var blankboard = new Array(gHeight);
 for (var i=0;i<gHeight;i++){
   blankboard[i]=new Array(gwidth);
 }
+
 function resetboard(board){
   for(var i=0;i<gHeight;i++){
     for(var j=0;j<gwidth;j++){
@@ -18,6 +20,41 @@ function resetboard(board){
   }
 }
 
+// function to determine the number of neighbour alive cells exist
+function checkAlive(board,cellX,cellY){
+  var counter=0; //track the number of alive cell when checking
+  var x;
+  var y;
+  for (var i=-1;i<2;i++){
+    x=Number(cellX)+i;
+    y=Number(cellY)-1;
+    if (y<0){
+      break
+    }
+    if(board[y][x]==="alive"){
+      counter=counter+1;
+    }
+  }
+  for (var i=-1;i<2;i++){
+    x=Number(cellX)+i;
+    y=Number(cellY)+1;
+    if (y>gHeight-1){
+      break
+    }
+    if(board[y][x]==="alive"){
+      counter=counter+1;
+    }
+  }
+  if(Number(cellX)+1<=gwidth&&Number(cellX)-1>-2){
+    if(board[Number(cellY)][Number(cellX)+1]==="alive"){
+      counter=counter+1;
+    }
+    if(board[Number(cellY)][Number(cellX)-1]==="alive"){
+      counter=counter+1;
+    }
+  }
+  return counter
+}
 
 resetboard(blankboard);
 
@@ -29,15 +66,17 @@ var App = React.createClass({
   },
   renderClickChangeCell:function(cellId){ // to change the vakue of state when clicking the button
     var tempValue = Object.assign([],this.state.board);
-    var x = cellId.split(",")[0]
-    var y = cellId.split(",")[1]
-    if(tempValue[x][y]=="dead"){
-      tempValue[x][y]="alive";
+    var a = cellId.split(",")[0]
+    var b = cellId.split(",")[1]
+
+    console.log(checkAlive(tempValue,b,a));
+    if(tempValue[a][b]=="dead"){
+      tempValue[a][b]="alive";
       this.setState({ "board": tempValue });
       return
     }
-    if(tempValue[x][y]=="alive"){
-      tempValue[x][y]="dead";
+    if(tempValue[a][b]=="alive"){
+      tempValue[a][b]="dead";
       this.setState({ "board": tempValue });
       return
     }
