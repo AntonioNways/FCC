@@ -119,6 +119,11 @@ var App = React.createClass({
     this.setState({ "generation": genNum })
     console.log(genNum);
   },
+  renderResetGen:function(){
+    var OldBoard = Object.assign([],this.state.board);
+    OldBoard = resetboard(OldBoard)
+    this.setState({ "generation": 0 })
+  },
   render: function() {
     return (
       <div>
@@ -127,6 +132,7 @@ var App = React.createClass({
         <div className="container">
           <div className="col-md-6 col-xs-12">
             <button onClick={this.renderNextGen}>Gen</button>
+            <button onClick={this.renderResetGen}>Reset</button>
             {console.log(this.state)}
           </div>
           <div className="col-md-6 col-xs-12">
