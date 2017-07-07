@@ -5,6 +5,7 @@ var Modal= require('react-bootstrap').Modal;
 var rowId;
 var gwidth=17; //set the grids' gwidth
 var gHeight=8; //set the grids' length
+var genNum=0; //count the generation that the game is in
 
 //setting board
 var blankboard = new Array(gHeight);
@@ -57,20 +58,21 @@ function checkAlive(board,cellX,cellY){
 }
 
 function cellLife(state,board,x,y){
-  NN= checkAlive(board,x,y); //number of neighbours alive
-  NewState="dead";
+  var NN= checkAlive(board,x,y); //number of neighbours alive
+  var NewState="dead";
   if(state==="dead"){
     if (NN==3){
-      Newstate="alive";
+      NewState="alive";
       return NewState;
     }
   }
   if (state==="alive"){
     if (NN==2||NN==3){
-      Newstate="alive";
+      NewState="alive";
       return NewState;
+    }
   }
-  return NewState
+  return NewState;
 }
 
 resetboard(blankboard);
@@ -78,7 +80,8 @@ resetboard(blankboard);
 var App = React.createClass({
   getInitialState: function() {
     return { 
-      "board": blankboard
+      "board": blankboard,
+      "generation":0
     };
   },
   renderClickChangeCell:function(cellId){ // to change the vakue of state when clicking the button
@@ -101,6 +104,21 @@ var App = React.createClass({
       console.log("ClickChangeCell Error");
     }
   },
+  renderNextGen:function(){
+    var OldBoard = Object.assign([],this.state.board);
+    var NewBoard = JSON.parse(JSON.stringify(OldBoard));
+    genNum=this.state.generation;
+    for (var h=0;h<gHeight;h++){
+      for(var w=0;w<gwidth;w++){
+        var state=OldBoard[h][w];
+        NewBoard[h][w]= cellLife(state,OldBoard,w,h);
+      }
+    }
+    genNum=genNum+1;
+    this.setState({ "board": NewBoard })
+    this.setState({ "generation": genNum })
+    console.log(genNum);
+  },
   render: function() {
     return (
       <div>
@@ -108,6 +126,7 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6 col-xs-12">
+            <button onClick={this.renderNextGen}>Gen</button>
             {console.log(this.state)}
           </div>
           <div className="col-md-6 col-xs-12">
@@ -126,8 +145,7 @@ var BoardPane = React.createClass({
     var cellId=rowId+","+y;
     let ChangeCell = () => this.props.renderClickChangeCell(cellId);
     return (
-            <button key={cellId} id={cellId} className={this.props.board[rowId][y]} onClick={ChangeCell}>{cellId}</button>
-            
+            <button key={cellId} id={cellId} className={this.props.board[rowId][y]} onClick={ChangeCell}>{cellId}</button>  
     );
   },
   renderBoardRow: function(val,x){
