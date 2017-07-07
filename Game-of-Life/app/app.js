@@ -56,6 +56,23 @@ function checkAlive(board,cellX,cellY){
   return counter
 }
 
+function cellLife(state,board,x,y){
+  NN= checkAlive(board,x,y); //number of neighbours alive
+  NewState="dead";
+  if(state==="dead"){
+    if (NN==3){
+      Newstate="alive";
+      return NewState;
+    }
+  }
+  if (state==="alive"){
+    if (NN==2||NN==3){
+      Newstate="alive";
+      return NewState;
+  }
+  return NewState
+}
+
 resetboard(blankboard);
 
 var App = React.createClass({
