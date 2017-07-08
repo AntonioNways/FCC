@@ -82,7 +82,8 @@ var App = React.createClass({
   getInitialState: function() {
     return { 
       "board": blankboard,
-      "generation":0
+      "generation":0,
+      "gamestate": "paused"
     };
   },
   renderClickChangeCell:function(cellId){ // to change the vakue of state when clicking the button
@@ -126,12 +127,18 @@ var App = React.createClass({
     this.setState({ "generation": 0 })
   },
   renderStartInterval:function(){
-    interval = setInterval(this.renderNextGen, 200);
+    if(this.state.gamestate=="paused"){
+      interval = setInterval(this.renderNextGen, 200);
+    }
+    this.setState({ "gamestate": "on" })
   },
   renderPauseGen:function(){
-    setTimeout(function() {
-    clearInterval(interval)
-    }, 200);
+    if(this.state.gamestate=="on"){
+      setTimeout(function() {
+      clearInterval(interval)
+      }, 100);
+    }
+    this.setState({ "gamestate": "paused" })
   },
   render: function() {
     return (
@@ -144,6 +151,9 @@ var App = React.createClass({
             <button onClick={this.renderResetGen}>Reset</button>
             <button onClick={this.renderPauseGen}>pause</button>
             {console.log(this.state)}
+          </div>
+          <div className="col-md-6 col-xs-12 Generation">
+            Generation : {this.state.generation}
           </div>
           <div className="col-md-6 col-xs-12">
             <BoardPane board={this.state.board} renderClickChangeCell={this.renderClickChangeCell}/>
