@@ -6,6 +6,7 @@ var rowId;
 var gwidth=17; //set the grids' gwidth
 var gHeight=8; //set the grids' length
 var genNum=0; //count the generation that the game is in
+var interval;
 
 //setting board
 var blankboard = new Array(gHeight);
@@ -124,6 +125,14 @@ var App = React.createClass({
     OldBoard = resetboard(OldBoard)
     this.setState({ "generation": 0 })
   },
+  renderStartInterval:function(){
+    interval = setInterval(this.renderNextGen, 200);
+  },
+  renderPauseGen:function(){
+    setTimeout(function() {
+    clearInterval(interval)
+    }, 200);
+  },
   render: function() {
     return (
       <div>
@@ -131,8 +140,9 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6 col-xs-12">
-            <button onClick={this.renderNextGen}>Gen</button>
+            <button onClick={this.renderStartInterval}>Start</button>
             <button onClick={this.renderResetGen}>Reset</button>
+            <button onClick={this.renderPauseGen}>pause</button>
             {console.log(this.state)}
           </div>
           <div className="col-md-6 col-xs-12">
