@@ -1,7 +1,19 @@
 .alive{
   background-color: limegreen;
+  width: 20px;
+  height: 20px;
 }
-.Generation{
-  margin-top: 8px;
-  margin-bottom: 8px;
+.dead{
+  background-color: white;
+  width: 20px;
+  height: 20px;
+}
+
+body{
+  background-color: dimgrey;
+  color: antiquewhite;
+}
+
+.spaceB{
+  margin-right: 5px;
 }

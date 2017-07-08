@@ -3,8 +3,8 @@ var ReactDOM = require('react-dom');
 var Modal= require('react-bootstrap').Modal;
 
 var rowId;
-var gwidth=17; //set the grids' gwidth
-var gHeight=8; //set the grids' length
+var gwidth=30; //set the grids' gwidth
+var gHeight=13; //set the grids' length
 var genNum=0; //count the generation that the game is in
 var interval;
 
@@ -141,18 +141,18 @@ var App = React.createClass({
   },
   renderResetGen:function(){
     var OldBoard = Object.assign([],this.state.board);
-    OldBoard = resetboard(OldBoard)
-    this.setState({ "generation": 0 })
     if(this.state.gamestate=="on"){
       setTimeout(function() {
       clearInterval(interval)
       }, 0);
     }
+    OldBoard = resetboard(OldBoard)
+    this.setState({ "generation": 0 })
     this.setState({ "gamestate": "paused" })
   },
   renderStartInterval:function(){
     if(this.state.gamestate=="paused"){
-      interval = setInterval(this.renderNextGen, 200);
+      interval = setInterval(this.renderNextGen, 180);
     }
     this.setState({ "gamestate": "on" })
   },
@@ -171,13 +171,13 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-6 col-xs-12">
-            <button onClick={this.renderStartInterval}>Start</button>
-            <button onClick={this.renderResetGen}>Reset</button>
-            <button onClick={this.renderPauseGen}>pause</button>
+            <button className="btn btn-success spaceB" onClick={this.renderStartInterval}>Start</button>
+            <button className="btn btn-info spaceB" onClick={this.renderResetGen}>Reset</button>
+            <button className="btn btn-warning spaceB" onClick={this.renderPauseGen}>pause</button>
             {console.log(this.state)}
           </div>
           <div className="col-md-6 col-xs-12 Generation">
-            Generation : {this.state.generation}
+            <h4>Generation : {this.state.generation}</h4>
           </div>
           <div className="col-md-6 col-xs-12">
             <BoardPane board={this.state.board} renderClickChangeCell={this.renderClickChangeCell}/>
@@ -195,7 +195,7 @@ var BoardPane = React.createClass({
     var cellId=rowId+","+y;
     let ChangeCell = () => this.props.renderClickChangeCell(cellId);
     return (
-            <button key={cellId} id={cellId} className={this.props.board[rowId][y]} onClick={ChangeCell}>{cellId}</button>  
+            <button key={cellId} id={cellId} className={this.props.board[rowId][y]} onClick={ChangeCell}></button>  
     );
   },
   renderBoardRow: function(val,x){
