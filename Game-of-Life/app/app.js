@@ -22,6 +22,21 @@ function resetboard(board){
   }
 }
 
+function randomBoard(board){
+  for(var i=0;i<gHeight;i++){
+    for(var j=0;j<gwidth;j++){
+      var Rnd = Math.floor(Math.random() * 10);
+      var cellState="alive";
+      if (Rnd>4){
+        cellState="dead";
+      }
+      board[i][j]=cellState;
+    }
+  }
+}
+
+
+
 // function to determine the number of neighbour alive cells exist
 function checkAlive(board,cellX,cellY){
   var counter=0; //track the number of alive cell when checking
@@ -76,7 +91,7 @@ function cellLife(state,board,x,y){
   return NewState;
 }
 
-resetboard(blankboard);
+randomBoard(blankboard);
 
 var App = React.createClass({
   getInitialState: function() {
@@ -121,10 +136,19 @@ var App = React.createClass({
     this.setState({ "generation": genNum })
     console.log(genNum);
   },
+  componentWillMount: function(){
+    this.renderStartInterval();
+  },
   renderResetGen:function(){
     var OldBoard = Object.assign([],this.state.board);
     OldBoard = resetboard(OldBoard)
     this.setState({ "generation": 0 })
+    if(this.state.gamestate=="on"){
+      setTimeout(function() {
+      clearInterval(interval)
+      }, 0);
+    }
+    this.setState({ "gamestate": "paused" })
   },
   renderStartInterval:function(){
     if(this.state.gamestate=="paused"){
