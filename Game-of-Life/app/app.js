@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Modal= require('react-bootstrap').Modal;
 
 var rowId;
 var gwidth=30; //set the grids' gwidth
@@ -105,8 +104,6 @@ var App = React.createClass({
     var tempValue = Object.assign([],this.state.board);
     var a = cellId.split(",")[0]
     var b = cellId.split(",")[1]
-
-    console.log(checkAlive(tempValue,b,a));
     if(tempValue[a][b]=="dead"){
       tempValue[a][b]="alive";
       this.setState({ "board": tempValue });
@@ -134,7 +131,6 @@ var App = React.createClass({
     genNum=genNum+1;
     this.setState({ "board": NewBoard })
     this.setState({ "generation": genNum })
-    console.log(genNum);
   },
   componentWillMount: function(){
     this.renderStartInterval();
@@ -170,19 +166,16 @@ var App = React.createClass({
         <center><h1>Play Game of Life</h1></center>
         <div id="header"></div>
         <div className="container">
-          <div className="col-md-6 col-xs-12">
+          <div className="col-md-12 col-xs-12">
             <button className="btn btn-success spaceB" onClick={this.renderStartInterval}>Start</button>
             <button className="btn btn-info spaceB" onClick={this.renderResetGen}>Reset</button>
             <button className="btn btn-warning spaceB" onClick={this.renderPauseGen}>pause</button>
-            {console.log(this.state)}
           </div>
-          <div className="col-md-6 col-xs-12 Generation">
+          <div className="col-md-12 col-xs-12 Generation">
             <h4>Generation : {this.state.generation}</h4>
           </div>
-          <div className="col-md-6 col-xs-12">
+          <div className="col-md-12 col-xs-12">
             <BoardPane board={this.state.board} renderClickChangeCell={this.renderClickChangeCell}/>
-          </div>
-          <div>
           </div>
         </div>
       </div>
