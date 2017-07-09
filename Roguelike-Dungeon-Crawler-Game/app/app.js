@@ -209,4 +209,4 @@ var BoardPane = React.createClass({
 });
 
 
-ReactDOM.render (<App />, document.getElementById("container"));
+ReactDOM.render (<App />, document.getElementById("game"));
