@@ -1,0 +1,19 @@
+.alive{
+  background-color: limegreen;
+  width: 20px;
+  height: 20px;
+}
+.dead{
+  background-color: white;
+  width: 20px;
+  height: 20px;
+}
+
+body{
+  background-color: dimgrey;
+  color: antiquewhite;
+}
+
+.spaceB{
+  margin-right: 5px;
+}
