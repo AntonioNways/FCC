@@ -36,8 +36,8 @@ function randomBoard(board){
 
 function initialPlayerLocation(board){
   var playerlocation =[];
-  var rndHeight = Math.round(Math.random() *gHeight);
-  var rndWidth = Math.round(Math.random() *gwidth);
+  var rndHeight = Math.round(Math.random() *gHeight-1);
+  var rndWidth = Math.round(Math.random() *gwidth-1);
   if(board[rndHeight][rndWidth]=="open"){
     return [rndHeight,rndWidth];
   }
@@ -45,6 +45,8 @@ function initialPlayerLocation(board){
     initialPlayerLocation(board);
   }
 }
+
+
 
 resetboard(blankboard);
 
@@ -65,6 +67,34 @@ var App = React.createClass({
   },
   componentWillMount: function(){
     this.renderStage();
+  },
+  PlayerMovement(newY,newX,){
+      if(newY<gHeight&&newY>-1&&newX>-1&&newX<gwidth){
+        var nextloc = this.state.board[newY][newX];
+        if(nextloc=="open"){
+            this.setState({
+              "playerlocation": [newY,newX]
+            });
+          return
+        }
+      }
+  },
+  playerAction:function(event){
+    if(event.keyCode==40){
+      this.PlayerMovement(this.state.playerlocation[0]+1,this.state.playerlocation[1])
+    }
+    if(event.keyCode==37){
+      this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]-1)
+    }
+    if(event.keyCode==39){
+      this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]+1)
+    }
+    if(event.keyCode==38){
+      this.PlayerMovement(this.state.playerlocation[0]-1,this.state.playerlocation[1])
+    }
+  },
+  componentDidMount(){
+    document.addEventListener("keydown",this.playerAction);
   },
   render: function() {
     return (
@@ -88,28 +118,11 @@ var App = React.createClass({
 });
 
 var BoardPane = React.createClass({
-  renderBoardCell: function(val,y){
-    var cellId=rowId+","+y;
-    let ChangeCell = () => this.props.renderClickChangeCell(cellId);
-    return (
-            <a key={cellId} id={cellId} className={this.props.board[rowId][y]}></a>
-             
-    );
-  },
-  renderBoardRow: function(val,x){
-    rowId=x;  
-    return (
-          <div key={"row"+x} id={"row"+x}>
-            {val.map(this.renderBoardCell)} 
-            {console.log(this.props.playerlocation)}
-          </div>
-    );
-  },
-  renderPlayer: function(val){ 
+  renderPlayer: function(a,b){ 
     var x=Number(this.props.playerlocation[1]*13);
     var y=Number(this.props.playerlocation[0]*13);
     return (
-          <rect key={val} x={x} y={y} width="13" height="13" fill="pink"/>
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="blue" stroke="black"/>
     );
   },
   render: function(){
@@ -117,7 +130,6 @@ var BoardPane = React.createClass({
         <div id="gameboard">
           <svg width="780" height="325">
             <rect x="0" y="0" width="780" height="325" fill="white"/>
-            {this.props.board.map(this.renderBoardRow)}
             {this.props.playerlocation.map(this.renderPlayer)}
           </svg>
         </div>
