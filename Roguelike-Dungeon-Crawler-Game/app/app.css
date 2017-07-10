@@ -1,19 +1,9 @@
-.alive{
-  background-color: limegreen;
-  width: 20px;
-  height: 20px;
-}
-.dead{
-  background-color: white;
-  width: 20px;
-  height: 20px;
-}
-
-body{
+.wall{
   background-color: dimgrey;
-  color: antiquewhite;
+  width: 10px;
+  height: 10px;
 }
-
-.spaceB{
-  margin-right: 5px;
+body{
+  background-color: black;
+  color: white;
 }
