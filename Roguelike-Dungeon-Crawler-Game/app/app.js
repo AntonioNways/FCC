@@ -21,7 +21,7 @@ function resetboard(board){
   }
 }
 
-function randomBoard(board){
+function randomBoard(board,DGNLevel){
   for(var i=0;i<gHeight;i++){
     for(var j=0;j<gwidth;j++){
       var Rnd = Math.floor(Math.random() * 10);
@@ -34,19 +34,16 @@ function randomBoard(board){
   }
 }
 
-function initialPlayerLocation(board){
-  var playerlocation =[];
-  var rndHeight = Math.round(Math.random() *gHeight-1);
-  var rndWidth = Math.round(Math.random() *gwidth-1);
+function randomizingBox(board){
+  var rndHeight = Math.floor(Math.random() *(gHeight-1));
+  var rndWidth = Math.floor(Math.random() *(gwidth-1));
   if(board[rndHeight][rndWidth]=="open"){
     return [rndHeight,rndWidth];
   }
   else{
-    initialPlayerLocation(board);
+    randomizingBox(board);
   }
 }
-
-
 
 resetboard(blankboard);
 
@@ -55,14 +52,46 @@ var App = React.createClass({
     return { 
       "board": blankboard,
       "playerlocation": [],
-      "gamestate": "paused"
+      "gamestate": "paused",
+      "dungeon": 1,
+      "enemyNum":5,
+      "enemyLoc": {},
+      "hpPack": 5, 
+      "hpLocation":{},
+      "weopon": "Fist", 
+      "WepLoc":{},
     };
   },
   renderStage:function(){
     var OldBoard = Object.assign([],this.state.board);
-    var startloc = initialPlayerLocation(this.state.board); //determine where player start
+
+    //HP pack
+    var OldhpLocation=[];
+    for (var i=0;i<this.state.hpPack;i++){
+      var HPLoc = randomizingBox(OldBoard);//where HP pack will spawn
+      OldBoard[HPLoc[0]][HPLoc[1]]="HP";
+      OldhpLocation[i]=HPLoc;
+    }
+
+    //Enemy
+    var ELocation=[];
+    for (var j=0;j<this.state.enemyNum;j++){
+      var ELoc = randomizingBox(OldBoard);//where HP pack will spawn
+      OldBoard[ELoc[0]][ELoc[1]]="Enemy";
+      ELocation[j]=ELoc;
+    }
+    //Weapon
+    var wepLocation = randomizingBox(OldBoard);
+    OldBoard[wepLocation[0]][wepLocation[1]]="Weopen";
+
+    //Player
+    var startloc = randomizingBox(OldBoard); //determine where player start
+
     this.setState({
-      "playerlocation": startloc
+      "playerlocation": startloc,
+      "enemyLoc": ELocation,
+      "WepLoc": wepLocation,
+      "hpLocation": OldhpLocation
     })
   },
   componentWillMount: function(){
@@ -108,7 +137,7 @@ var App = React.createClass({
           </div>
           <div className="col-md-12 col-xs-12">
             
-              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} />
+              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WepLoc={this.state.WepLoc}/>
             
           </div>
         </div>
@@ -118,6 +147,27 @@ var App = React.createClass({
 });
 
 var BoardPane = React.createClass({
+  renderEnemy: function(val,h,array){ 
+    var x=Number(val[1]*13);
+    var y=Number(val[0]*13);
+    return (
+          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="red" stroke="red"/>
+    );
+  },
+  renderHP: function(val,h,array){ 
+    var x=Number(val[1]*13);
+    var y=Number(val[0]*13);
+    return (
+          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="green" stroke="green"/>
+    );
+  },
+  renderWeopen: function(a,b){ 
+    var x=Number(this.props.WepLoc[1]*13);
+    var y=Number(this.props.WepLoc[0]*13);
+    return (
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow" stroke="yellow"/>
+    );
+  },
   renderPlayer: function(a,b){ 
     var x=Number(this.props.playerlocation[1]*13);
     var y=Number(this.props.playerlocation[0]*13);
@@ -130,6 +180,9 @@ var BoardPane = React.createClass({
         <div id="gameboard">
           <svg width="780" height="325">
             <rect x="0" y="0" width="780" height="325" fill="white"/>
+            {this.props.hpLocation.map(this.renderHP)}
+            {this.props.enemyLoc.map(this.renderEnemy)}
+            {this.props.WepLoc.map(this.renderWeopen)}
             {this.props.playerlocation.map(this.renderPlayer)}
           </svg>
         </div>
