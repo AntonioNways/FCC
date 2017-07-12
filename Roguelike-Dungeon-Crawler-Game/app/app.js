@@ -5,6 +5,8 @@ var rowId;
 var gwidth=60; //set the grids' gwidth
 var gHeight=25; //set the grids' length
 var genNum=0; //count the generation that the game is in
+var eHP=6;
+var upgradeDmg=3;
 
 
 //setting board
@@ -28,7 +30,7 @@ function randomizingBox(board){
   var rndWidth = Math.floor(Math.random() *(gwidth-1));
   if(board[rndHeight][rndWidth]=="open"){
     result=[rndHeight,rndWidth]
-    if(result!=undefined){
+    if(result!=[]){
       return result;
     }
   }
@@ -47,10 +49,15 @@ var App = React.createClass({
       "enemyNum":5,
       "enemyLoc": {},
       "playerHP": 100,
+      "playerAtk": 8,
       "hpPack": 5, 
       "hpLocation":{},
-      "weapon": "Fist", 
+      "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword"],
+      "weaponLv": 0,  
       "WeapLoc":{},
+      "PlayerLv": 1,
+      "PlayerExp": 0,
+      "ExpLv":[100,165,235,310,380]
     };
   },
   renderStage:function(){
@@ -72,6 +79,7 @@ var App = React.createClass({
       var ELoc = randomizingBox(OldBoard);//where HP pack will spawn
       console.log(ELoc);
       OldBoard[ELoc[0]][ELoc[1]]="Enemy";
+      ELoc[2]=20+eHP*this.state.dungeon;
       ELocation[j]=ELoc;
     }
     //Weapon
@@ -94,22 +102,63 @@ var App = React.createClass({
   PlayerMovement(newY,newX,){
     var OldBoard = Object.assign([],this.state.board);
     var HPArray = Object.assign([],this.state.hpLocation);
+    var EnemyArray = Object.assign([],this.state.enemyLoc);
+
       if(newY<gHeight&&newY>-1&&newX>-1&&newX<gwidth){
         var nextloc = this.state.board[newY][newX];
+        ////////////////////////////////////////
+        //Enemy mechanic
+        if(nextloc=="Enemy"){
+          var NewEnemyArray=[];
+          var Enemyatk=Math.floor(Math.random()*(5*this.state.dungeon)/2-Math.random()*(5*this.state.dungeon)/2+5+this.state.dungeon/2)
+          var PlayerDmg= Math.floor(Math.random()*this.state.playerAtk/3-Math.random()*this.state.playerAtk/3+this.state.playerAtk)
+          for(var h=0;h<EnemyArray.length;h++){
+            if(EnemyArray[h][0]==newY&&EnemyArray[h][1]==newX){
+              EnemyArray[h][2]=EnemyArray[h][2]-PlayerDmg;
+              if(EnemyArray[h][2]<1){
+                delete EnemyArray[h];
+                OldBoard[newY][newX]="open";
+                this.setState({
+                  "PlayerExp": this.state.PlayerExp+15+5*this.state.dungeon,
+                });  
+              }
+              this.setState({
+                "playerHP": this.state.playerHP-Enemyatk,
+              });      
+            }
+          }
+          console.log("exp="+this.state.PlayerExp+", Hp="+this.state.playerHP)
+        }  
+        if(nextloc=="weapon"){
+          OldBoard[newY][newX]="open";
+          this.setState({
+            "weaponLv": this.state.weaponLv+1,
+            "playerAtk": 8+upgradeDmg+Math.round(Math.random()*2),
+          });
+        }
+        /////////////////////////////////////////
         if(nextloc=="open"||nextloc=="HP"){
+          /////////////////////////////////////////
             //game mechanic for HP pack
             if(nextloc=="HP"){
               var NewHP=[];
               OldBoard[newY][newX]="open";
               for(var h=0;h<HPArray.length;h++){
-                if(HPArray[h][0]!==newY&&HPArray[h][1]!==newX){
-                  NewHP.push([HPArray[h][0],HPArray[h][1]]);       
+                if(HPArray[h][0]==newY&&HPArray[h][1]==newX){      
+                }
+                else{
+                  NewHP.push([HPArray[h][0],HPArray[h][1]]); 
                 }
               }
+              
               this.setState({
                 "playerHP": this.state.playerHP+20,
                 "hpLocation": NewHP,
               });
+              ////////////////////////////////////////
+            //game mechanic for Sword Upgrade
+              ////////////////////////////////////////
+              console.log("HP="+this.state.playerHP)
             }
             this.setState({
               "playerlocation": [newY,newX]
@@ -160,9 +209,11 @@ var BoardPane = React.createClass({
   renderEnemy: function(val,h,array){ 
     var x=Number(val[1]*13);
     var y=Number(val[0]*13);
+    if(this.props.board[val[0]][val[1]]=="Enemy"){
     return (
           <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="red" stroke="red"/>
     );
+    }
   },
   renderHP: function(val,h,array){ 
     var x=Number(val[1]*13);
@@ -171,12 +222,14 @@ var BoardPane = React.createClass({
           <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="green" stroke="green"/>
     );
   },
-  renderWeapen: function(a,b){ 
+  renderWeapon: function(a,b){ 
     var x=Number(this.props.WeapLoc[1]*13);
     var y=Number(this.props.WeapLoc[0]*13);
+    if(this.props.board[this.props.WeapLoc[0]][this.props.WeapLoc[1]]=="weapon"){
     return (
           <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow" stroke="yellow"/>
     );
+    }
   },
   renderPlayer: function(a,b){ 
     var x=Number(this.props.playerlocation[1]*13);
@@ -192,7 +245,7 @@ var BoardPane = React.createClass({
             <rect x="0" y="0" width="780" height="325" fill="white"/>
             {this.props.hpLocation.map(this.renderHP)}
             {this.props.enemyLoc.map(this.renderEnemy)}
-            {this.props.WeapLoc.map(this.renderWeapen)}
+            {this.props.WeapLoc.map(this.renderWeapon)}
             {this.props.playerlocation.map(this.renderPlayer)}
           </svg>
         </div>
