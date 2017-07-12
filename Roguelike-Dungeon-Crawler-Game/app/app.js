@@ -5,9 +5,9 @@ var rowId;
 var gwidth=60; //set the grids' gwidth
 var gHeight=25; //set the grids' length
 var genNum=0; //count the generation that the game is in
-var eHP=6;
-var upgradeDmg=3;
-
+var eHP=7;
+var upgradeDmg=5;
+var enemyAttack=9;
 
 //setting board
 var blankboard = new Array(gHeight);
@@ -110,7 +110,7 @@ var App = React.createClass({
         //Enemy mechanic
         if(nextloc=="Enemy"){
           var NewEnemyArray=[];
-          var Enemyatk=Math.floor(Math.random()*(5*this.state.dungeon)/2-Math.random()*(5*this.state.dungeon)/2+5+this.state.dungeon/2)
+          var Enemyatk=Math.floor(Math.random()*(5*this.state.dungeon)/2-Math.random()*(5*this.state.dungeon)/2+enemyAttack+this.state.dungeon/2)
           var PlayerDmg= Math.floor(Math.random()*this.state.playerAtk/3-Math.random()*this.state.playerAtk/3+this.state.playerAtk)
           for(var h=0;h<EnemyArray.length;h++){
             if(EnemyArray[h][0]==newY&&EnemyArray[h][1]==newX){
@@ -120,7 +120,15 @@ var App = React.createClass({
                 OldBoard[newY][newX]="open";
                 this.setState({
                   "PlayerExp": this.state.PlayerExp+15+5*this.state.dungeon,
-                });  
+                });
+                ////LEVEL UP Mechanics
+                if(this.state.PlayerExp>=this.state.ExpLv[this.state.PlayerLv-1]){
+                  this.setState({
+                  "PlayerExp": this.state.PlayerExp-this.state.ExpLv[this.state.PlayerLv-1],
+                  "playerAtk": this.state.playerAtk+1+2*this.state.PlayerLv,
+                  "PlayerLv": this.state.PlayerLv+1,
+                });
+                }  
               }
               this.setState({
                 "playerHP": this.state.playerHP-Enemyatk,
@@ -193,6 +201,28 @@ var App = React.createClass({
           <div className="col-md-12 col-xs-12">
           </div>
           <div className="col-md-12 col-xs-12">
+          <table width="100%">
+              <thead>
+                <tr>
+                  <th width="15%">HP</th>
+                  <th width="15%">Attack</th>
+                  <th width="20%">Weapon</th>
+                  <th width="15%">Level</th>
+                  <th width="15%">Experience</th>
+                  <th width="15%">Dungeon Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>{this.state.playerHP}</th>
+                  <th>{this.state.playerAtk}</th>
+                  <th>{this.state.weaponType[this.state.weaponLv]}</th>
+                  <th>{this.state.PlayerLv}</th>
+                  <th>{this.state.PlayerExp}</th>
+                  <th>{this.state.dungeon}</th>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div className="col-md-12 col-xs-12">
             
