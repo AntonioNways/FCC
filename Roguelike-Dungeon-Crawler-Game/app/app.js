@@ -5,9 +5,13 @@ var rowId;
 var gwidth=60; //set the grids' gwidth
 var gHeight=25; //set the grids' length
 var genNum=0; //count the generation that the game is in
-var eHP=7;
-var upgradeDmg=5;
-var enemyAttack=9;
+var eHP=8;
+var upgradeDmg=6;
+var enemyAttack=8;
+var bossLevel=4;
+var PlayerLvUPDmg=9;
+var BossAttack = 50;
+var bossHPS=880;
 
 //setting board
 var blankboard = new Array(gHeight);
@@ -26,15 +30,20 @@ function resetboard(board){
 
 function randomizingBox(board){
   var result;
-  var rndHeight = Math.floor(Math.random() *(gHeight-1));
-  var rndWidth = Math.floor(Math.random() *(gwidth-1));
+  var rndHeight = Math.round(Math.random() *(gHeight-2));
+  var rndWidth = Math.round(Math.random() *(gwidth-2));
+  if(board[rndHeight][rndWidth]!=="open"||board[rndHeight+1][rndWidth]!=="open"||board[rndHeight+1][rndWidth+1]!=="open"||board[rndHeight][rndWidth+1]!=="open"){
+    return randomizingBox(board);
+  }
   if(board[rndHeight][rndWidth]=="open"){
     result=[rndHeight,rndWidth]
     if(result!=[]){
       return result;
     }
   }
-  randomizingBox(board);
+  else{
+    console.log("here")
+  }
 }
 
 resetboard(blankboard);
@@ -44,7 +53,6 @@ var App = React.createClass({
     return { 
       "board": blankboard,
       "playerlocation": [],
-      "gamestate": "paused",
       "dungeon": 1,
       "enemyNum":5,
       "enemyLoc": {},
@@ -55,9 +63,12 @@ var App = React.createClass({
       "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword"],
       "weaponLv": 0,  
       "WeapLoc":{},
+      "StairLoc":[0,0,true],
       "PlayerLv": 1,
       "PlayerExp": 0,
-      "ExpLv":[100,165,235,310,380]
+      "ExpLv":[100,160,230,310,380,450],
+      "boss": bossHPS,
+      "BossLoc": {},
     };
   },
   renderStage:function(){
@@ -74,10 +85,9 @@ var App = React.createClass({
 
     //Enemy
     var ELocation=[];
-    var ENum=Math.round(this.state.enemyNum+Math.random()*(this.state.dungeon*2));
+    var ENum=Math.round(this.state.enemyNum+Math.random()*(this.state.dungeon*2)/2+Math.random()*(this.state.dungeon)/2);
     for (var j=0;j<ENum;j++){
       var ELoc = randomizingBox(OldBoard);//where HP pack will spawn
-      console.log(ELoc);
       OldBoard[ELoc[0]][ELoc[1]]="Enemy";
       ELoc[2]=20+eHP*this.state.dungeon;
       ELocation[j]=ELoc;
@@ -85,7 +95,27 @@ var App = React.createClass({
     //Weapon
     var weapLocation = randomizingBox(OldBoard);
     OldBoard[weapLocation[0]][weapLocation[1]]="weapon";
-
+    //Stair location
+    var bossLoc=[];
+    if(this.state.dungeon!=bossLevel){
+      var bossLocation = randomizingBox(OldBoard);
+      var stairLocation = randomizingBox(OldBoard);
+      OldBoard[stairLocation[0]][stairLocation[1]]="stair";
+      bossLoc[0] = bossLocation;
+    }
+    ///BOSSS Location
+    if(this.state.dungeon==bossLevel){
+      stairLocation = [0,0,true];
+      bossLocation = randomizingBox(OldBoard);
+      OldBoard[bossLocation[0]][bossLocation[1]]="boss";
+      OldBoard[bossLocation[0]][bossLocation[1]+1]="boss";
+      OldBoard[bossLocation[0]+1][bossLocation[1]]="boss";
+      OldBoard[bossLocation[0]+1][bossLocation[1]+1]="boss";
+      bossLoc[0]=[bossLocation[0],bossLocation[1]];
+      bossLoc[1]=[bossLocation[0],bossLocation[1]+1];
+      bossLoc[2]=[bossLocation[0]+1,bossLocation[1]];
+      bossLoc[3]=[bossLocation[0]+1,bossLocation[1]+1];
+    }
     //Player
     var startloc = randomizingBox(OldBoard); //determine where player start
 
@@ -93,7 +123,9 @@ var App = React.createClass({
       "playerlocation": startloc,
       "enemyLoc": ELocation,
       "WeapLoc": weapLocation,
-      "hpLocation": OldhpLocation
+      "StairLoc": stairLocation,
+      "hpLocation": OldhpLocation,
+      "BossLoc": bossLoc,
     })
   },
   componentWillMount: function(){
@@ -111,10 +143,10 @@ var App = React.createClass({
         if(nextloc=="Enemy"){
           var NewEnemyArray=[];
           var Enemyatk=Math.floor(Math.random()*(5*this.state.dungeon)/2-Math.random()*(5*this.state.dungeon)/2+enemyAttack+this.state.dungeon/2)
-          var PlayerDmg= Math.floor(Math.random()*this.state.playerAtk/3-Math.random()*this.state.playerAtk/3+this.state.playerAtk)
+          var PlayerAttck= Math.floor(Math.random()*this.state.playerAtk/3-Math.random()*this.state.playerAtk/3+this.state.playerAtk)
           for(var h=0;h<EnemyArray.length;h++){
             if(EnemyArray[h][0]==newY&&EnemyArray[h][1]==newX){
-              EnemyArray[h][2]=EnemyArray[h][2]-PlayerDmg;
+              EnemyArray[h][2]=EnemyArray[h][2]-PlayerAttck;
               if(EnemyArray[h][2]<1){
                 delete EnemyArray[h];
                 OldBoard[newY][newX]="open";
@@ -125,8 +157,9 @@ var App = React.createClass({
                 if(this.state.PlayerExp>=this.state.ExpLv[this.state.PlayerLv-1]){
                   this.setState({
                   "PlayerExp": this.state.PlayerExp-this.state.ExpLv[this.state.PlayerLv-1],
-                  "playerAtk": this.state.playerAtk+1+2*this.state.PlayerLv,
+                  "playerAtk": this.state.playerAtk+2+PlayerLvUPDmg*this.state.PlayerLv,
                   "PlayerLv": this.state.PlayerLv+1,
+                  "playerHP": this.state.playerHP+10,
                 });
                 }  
               }
@@ -135,15 +168,41 @@ var App = React.createClass({
               });      
             }
           }
-          console.log("exp="+this.state.PlayerExp+", Hp="+this.state.playerHP)
         }  
         if(nextloc=="weapon"){
           OldBoard[newY][newX]="open";
           this.setState({
             "weaponLv": this.state.weaponLv+1,
-            "playerAtk": 8+upgradeDmg+Math.round(Math.random()*2),
+            "playerAtk": this.state.playerAtk+upgradeDmg+this.state.dungeon+Math.round(Math.random()*2),
           });
         }
+        ///////BOSSSS
+        if(nextloc=="boss"){
+          var BossAtk1=Math.floor(Math.random()*BossAttack/4-Math.random()*BossAttack/4+BossAttack)
+          var PlayerAttck1= Math.floor(Math.random()*this.state.playerAtk/3-Math.random()*this.state.playerAtk/3+this.state.playerAtk)
+          this.setState({
+            "boss": this.state.boss-PlayerAttck1,
+            "playerHP": this.state.playerHP-BossAtk1,
+          });
+          if(this.state.playerHP<0){
+            console.log("You Lose!")
+          }
+          if (this.state.boss<0&&this.state.playerHP>=0){
+            console.log("win!");
+          }
+        }
+        ////////////////STAIRS
+        if(nextloc=="stair"){
+          resetboard(blankboard);
+          this.setState({
+            "board": blankboard,
+            "dungeon": this.state.dungeon+1,
+            "enemyNum": this.state.enemyNum+1,
+            "hpPack": this.state.hpPack+1,
+          });
+          this.renderStage();
+        }
+
         /////////////////////////////////////////
         if(nextloc=="open"||nextloc=="HP"){
           /////////////////////////////////////////
@@ -226,7 +285,7 @@ var App = React.createClass({
           </div>
           <div className="col-md-12 col-xs-12">
             
-              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc}/>
+              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc}/>
             
           </div>
         </div>
@@ -261,6 +320,29 @@ var BoardPane = React.createClass({
     );
     }
   },
+  renderStair: function(a,b){
+    if(this.props.dungeon==bossLevel){
+      return
+    }
+    var x=Number(this.props.StairLoc[1]*13);
+    var y=Number(this.props.StairLoc[0]*13);
+    if(this.props.board[this.props.StairLoc[0]][this.props.StairLoc[1]]=="stair"){
+    return (
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="purple" stroke="purple"/>
+    );
+    }
+  },
+  renderBoss:function(a,b){ 
+    if(this.props.dungeon!==bossLevel){
+      return
+    }
+    var x=Number(a[1]*13);
+    var y=Number(a[0]*13);
+    return (
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="15" height="15" fill="darkred"/>
+    );
+    
+  },
   renderPlayer: function(a,b){ 
     var x=Number(this.props.playerlocation[1]*13);
     var y=Number(this.props.playerlocation[0]*13);
@@ -276,6 +358,8 @@ var BoardPane = React.createClass({
             {this.props.hpLocation.map(this.renderHP)}
             {this.props.enemyLoc.map(this.renderEnemy)}
             {this.props.WeapLoc.map(this.renderWeapon)}
+            {this.props.StairLoc.map(this.renderStair)}
+            {this.props.BossLoc.map(this.renderBoss)}
             {this.props.playerlocation.map(this.renderPlayer)}
           </svg>
         </div>
