@@ -43,24 +43,20 @@ function chooseDirection(sh,eh,sw,ew,board,Dir){
   var newPoint;
   if(Dir=="N"){//north direction
     newPoint=Math.round(Math.random()*(ew-sw)+sw)
-    console.log("N");
     return([sh-1,newPoint,"N"])
     
   }
   if(Dir=="E"){//east direction
     newPoint=Math.round(Math.random()*(eh-sh))+sh;
-    console.log("E");
     return([newPoint,ew+1,"E"])
 
   }
   if(Dir=="S"){//south direction
     newPoint=Math.round(Math.random()*(ew-sw)+sw)
-    console.log("S");
     return([eh+1,newPoint,"S"])
   }
   if(Dir=="W"){//west direction
     newPoint=Math.round(Math.random()*(eh-sh)+sh)
-    console.log("W");
     return([newPoint,sw-1,"W"])
   }
   else{
@@ -201,7 +197,8 @@ var App = React.createClass({
       "PlayerExp": 0,
       "gamestate": "playing",
       isModalOpen: false  
-      });
+    });
+    this.renderStage();
   },
   renderStage:function(){
     var OldBoard = Object.assign([],this.state.board);
@@ -229,7 +226,7 @@ var App = React.createClass({
     var wLoc=randomizingBox(OldBoard);
     OldBoard[wLoc[0]][wLoc[1]]="weapon";
     weapLocation[0]=wLoc
-    var weopLuck= Math.random()*100;
+    var weopLuck= Math.random()*108;
     if (weopLuck<8){
       wLoc=randomizingBox(OldBoard);
       OldBoard[wLoc[0]][wLoc[1]]="weapon";
@@ -430,7 +427,8 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-12 col-xs-12">
-            <button className="btn btn-warning" onClick={this.renderDarkness}>Toggle Darkness</button>
+            <button className="btn btn btn-danger spaceB" onClick={this.renderResetG}>Restart</button>{" "}
+            <button className="btn btn-info" onClick={this.renderDarkness}>Toggle Darkness</button>
           </div>
           <div className="col-md-12 col-xs-12">
           <table width="100%">
@@ -488,7 +486,6 @@ var BoardPane = React.createClass({
   renderWeapon: function(a,b,c){ 
     var x=Number(a[1]*13);
     var y=Number(a[0]*13);
-    console.log(b)
     if(this.props.board[this.props.WeapLoc[b][0]][this.props.WeapLoc[b][1]]=="weapon"){
     return (
           <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow"/>
