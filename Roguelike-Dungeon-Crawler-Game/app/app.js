@@ -445,7 +445,7 @@ var App = React.createClass({
                   <th>{this.state.playerAtk}</th>
                   <th>{this.state.weaponType[this.state.weaponLv]}</th>
                   <th>{this.state.PlayerLv}</th>
-                  <th>{this.state.PlayerExp}</th>
+                  <th>{this.state.PlayerExp+" / "+this.state.ExpLv[this.state.PlayerLv-1]}</th>
                   <th>{this.state.dungeon}</th>
                 </tr>
               </tbody>
