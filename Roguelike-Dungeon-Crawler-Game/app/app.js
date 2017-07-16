@@ -111,10 +111,8 @@ function generateMap(a1,a2,b1,b2,board,DirCh){
     var SDir=DirCh[Math.round(Math.random()*3)]
     var newPoin=chooseDirection(a1,a2,b1,b2,board,SDir);
     var newbox= checkRoom(newPoin[0],newPoin[1],newPoin[2],board);
-    console.log(newbox);
     counter++;
     if(newbox[0]!=false){
-      console.log(newPoin);
       counter++;
       board[newPoin[0]][newPoin[1]]="open";
       board = buildBox(newbox[0],newbox[1],newbox[2],newbox[3],board)
@@ -175,7 +173,7 @@ var App = React.createClass({
       "playerAtk": 8,
       "hpPack": 5, 
       "hpLocation":{},
-      "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword","Winning Blade"],
+      "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword","Winning Blade","luck Sword","The Impossible blade","Sure Win Sword"],
       "weaponLv": 0,  
       "WeapLoc":{},
       "StairLoc":[0,0,true],
@@ -201,7 +199,6 @@ var App = React.createClass({
       "weaponLv": 0,
       "PlayerLv": 1,
       "PlayerExp": 0,
-      "darkness": true,
       "gamestate": "playing",
       isModalOpen: false  
       });
@@ -228,8 +225,17 @@ var App = React.createClass({
       ELocation[j]=ELoc;
     }
     //Weapon
-    var weapLocation = randomizingBox(OldBoard);
-    OldBoard[weapLocation[0]][weapLocation[1]]="weapon";
+    var weapLocation = []
+    var wLoc=randomizingBox(OldBoard);
+    OldBoard[wLoc[0]][wLoc[1]]="weapon";
+    weapLocation[0]=wLoc
+    var weopLuck= Math.random()*100;
+    if (weopLuck<8){
+      wLoc=randomizingBox(OldBoard);
+      OldBoard[wLoc[0]][wLoc[1]]="weapon";
+      weapLocation[1]=wLoc
+    }
+    
     //Stair location
     var bossLoc=[];
     if(this.state.dungeon!=bossLevel){
@@ -369,7 +375,6 @@ var App = React.createClass({
               ////////////////////////////////////////
             //game mechanic for Sword Upgrade
               ////////////////////////////////////////
-              console.log("HP="+this.state.playerHP)
             }
             this.setState({
               "playerlocation": [newY,newX]
@@ -480,10 +485,11 @@ var BoardPane = React.createClass({
           <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="green"/>
     );
   },
-  renderWeapon: function(a,b){ 
-    var x=Number(this.props.WeapLoc[1]*13);
-    var y=Number(this.props.WeapLoc[0]*13);
-    if(this.props.board[this.props.WeapLoc[0]][this.props.WeapLoc[1]]=="weapon"){
+  renderWeapon: function(a,b,c){ 
+    var x=Number(a[1]*13);
+    var y=Number(a[0]*13);
+    console.log(b)
+    if(this.props.board[this.props.WeapLoc[b][0]][this.props.WeapLoc[b][1]]=="weapon"){
     return (
           <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow"/>
     );
