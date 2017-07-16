@@ -359,6 +359,9 @@ var App = React.createClass({
             });
           return
         }
+      if(this.state.gamestate!=="playing"){
+        this.setState({ isModalOpen: true });
+      }
       }
   },
   playerAction:function(event){
@@ -435,7 +438,7 @@ var App = React.createClass({
               <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc} darkness={this.state.darkness} />
           </div>
           <div>
-            <ModalPane isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} renderRestart={this.renderDelete} gamestate={this.state.gamestate}/>
+            <ModalPane isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} renderRestart={this.renderRestartG} gamestate={this.state.gamestate}/>
           </div>
         </div>
       </div>
@@ -548,11 +551,11 @@ var ModalPane = React.createClass({
           <Modal.Title id="contained-modal-title">{this.props.gamestate}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <center>Would you like to restart the game?</center>
+          <center className="ModalWords">Would you like to restart the game?</center>
         </Modal.Body>
         <Modal.Footer> <center>
-          <button type="button" className="btn btn-primary" onClick={this.ConfirmRestart} id="deleteButton">Yes</button>
-          <button type="button" className="btn btn-primary" onClick={close} id="deleteButton">No</button> </center>
+          <button type="button" className="btn btn-primary" onClick={this.ConfirmRestart} id="Restart">Yes</button>
+          <button type="button" className="btn btn-primary" onClick={close} id="Close">No</button> </center>
         </Modal.Footer>
       </Modal>
     );
