@@ -2,16 +2,18 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var rowId;
-var gwidth=60; //set the grids' gwidth
-var gHeight=25; //set the grids' length
+var gwidth=80; //set the grids' gwidth
+var gHeight=28; //set the grids' length
 var genNum=0; //count the generation that the game is in
 var eHP=8;
 var upgradeDmg=6;
 var enemyAttack=8;
 var bossLevel=4;
 var PlayerLvUPDmg=9;
-var BossAttack = 50;
-var bossHPS=880;
+var BossAttack = 55;
+var bossHPS=950;
+var mapWidth= gwidth*13;
+var mapHeight = gHeight*13;
 
 //setting board
 var blankboard = new Array(gHeight);
@@ -22,11 +24,123 @@ for (var i=0;i<gHeight;i++){
 function resetboard(board){
   for(var i=0;i<gHeight;i++){
     for(var j=0;j<gwidth;j++){
-      board[i][j]="open"; // places where the player can walk around
+      board[i][j]="wall"; // places where the player can walk around
     }
   }
 }
 
+function buildBox(minH,maxH,minW,maxW,board){
+  for (var h=minH;h<=maxH;h++){
+    for(var w=minW;w<=maxW;w++){
+      board[h][w]="open";
+    }
+  }
+  return board;
+}
+
+function chooseDirection(sh,eh,sw,ew,board,Dir){
+  var newPoint;
+  if(Dir=="N"){//north direction
+    newPoint=Math.round(Math.random()*(ew-sw)+sw)
+    console.log("N");
+    return([sh-1,newPoint,"N"])
+    
+  }
+  if(Dir=="E"){//east direction
+    newPoint=Math.round(Math.random()*(eh-sh))+sh;
+    console.log("E");
+    return([newPoint,ew+1,"E"])
+
+  }
+  if(Dir=="S"){//south direction
+    newPoint=Math.round(Math.random()*(ew-sw)+sw)
+    console.log("S");
+    return([eh+1,newPoint,"S"])
+  }
+  if(Dir=="W"){//west direction
+    newPoint=Math.round(Math.random()*(eh-sh)+sh)
+    console.log("W");
+    return([newPoint,sw-1,"W"])
+  }
+  else{
+    console.log("checkDirection")
+  }
+}
+
+function checkRoom(H,W,Dir,board){
+  var rndAdd=Math.round(Math.random() *3)+2;
+  var rndAdd1=Math.round(Math.random() *3)+2;
+  var H0;
+  var H1;
+  var W0;
+  var W1;
+  if (Dir=="N"){
+    H0=H-rndAdd;
+    H1=H-1;
+    W0=W-rndAdd1;
+    W1=W+rndAdd;
+  }
+  if (Dir=="E"){
+    H0=H-rndAdd1;
+    H1=H+rndAdd;
+    W0=W+1;
+    W1=W+rndAdd;
+  }
+  if (Dir=="S"){
+    H0=H+1;
+    H1=H+rndAdd;
+    W0=W-rndAdd1;
+    W1=W+rndAdd;
+  }
+  if (Dir=="W"){
+    H0=H-rndAdd;
+    H1=H+rndAdd1;
+    W0=W-rndAdd;
+    W1=W-1;
+  }
+  if([H0]<1||[H1]>gHeight-2||[W0]<1||[W1]>gwidth-2){
+      return [false,1];
+  }
+  return [H0,H1,W0,W1];
+}
+
+function generateMap(a1,a2,b1,b2,board,DirCh){
+  board = buildBox(a1,a2,b1,b2,board);
+  for (var counter=0;counter<15;counter){
+    var SDir=DirCh[Math.round(Math.random()*3)]
+    var newPoin=chooseDirection(a1,a2,b1,b2,board,SDir);
+    var newbox= checkRoom(newPoin[0],newPoin[1],newPoin[2],board);
+    console.log(newbox);
+    counter++;
+    if(newbox[0]!=false){
+      console.log(newPoin);
+      counter++;
+      board[newPoin[0]][newPoin[1]]="open";
+      board = buildBox(newbox[0],newbox[1],newbox[2],newbox[3],board)
+      a1=newbox[0]
+      a2=newbox[1]
+      b1=newbox[2]
+      b2=newbox[3]
+    }
+   }
+}
+
+function randomBoard(board){
+  var a1=15;
+  var a2=18;
+  var b1=30;
+  var b2=40;
+  var DirE=["N","E","S","E"];
+  var DirS=["S","W","S","E"];
+  var DirW=["N","W","S","W"];
+  var DirN=["N","E","N","W"];
+  resetboard(board);
+  generateMap(a1,a2,b1,b2,board,DirN);
+  generateMap(a1,a2,b1,b2,board,DirE);
+  generateMap(a1,a2,b1,b2,board,DirS);
+  generateMap(a1,a2,b1,b2,board,DirW);
+  
+}
 
 function randomizingBox(board){
   var result;
@@ -46,7 +160,7 @@ function randomizingBox(board){
   }
 }
 
-resetboard(blankboard);
+randomBoard(blankboard);
 
 var App = React.createClass({
   getInitialState: function() {
@@ -69,6 +183,8 @@ var App = React.createClass({
       "ExpLv":[100,160,230,310,380,450],
       "boss": bossHPS,
       "BossLoc": {},
+      "darkness": true,
+      "gamestate": "playing",
     };
   },
   renderStage:function(){
@@ -193,7 +309,7 @@ var App = React.createClass({
         }
         ////////////////STAIRS
         if(nextloc=="stair"){
-          resetboard(blankboard);
+          randomBoard(blankboard);
           this.setState({
             "board": blankboard,
             "dungeon": this.state.dungeon+1,
@@ -250,6 +366,21 @@ var App = React.createClass({
   },
   componentDidMount(){
     document.addEventListener("keydown",this.playerAction);
+    let canvas =ReactDOM.findDOMNode(this.refs.gameWall);
+    
+  },
+  renderDarkness:function(){
+    if(this.state.darkness){
+      console.log("here")
+        this.setState({
+          "darkness": false,
+        });
+    }
+    else{
+        this.setState({
+          "darkness": true,
+        }); 
+    }
   },
   render: function() {
     return (
@@ -258,6 +389,7 @@ var App = React.createClass({
         <div id="header"></div>
         <div className="container">
           <div className="col-md-12 col-xs-12">
+            <button className="btn btn-warning" onClick={this.renderDarkness}>Toggle Darkness</button>
           </div>
           <div className="col-md-12 col-xs-12">
           <table width="100%">
@@ -284,9 +416,7 @@ var App = React.createClass({
             </table>
           </div>
           <div className="col-md-12 col-xs-12">
-            
-              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc}/>
-            
+              <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc} darkness={this.state.darkness} />
           </div>
         </div>
       </div>
@@ -300,7 +430,7 @@ var BoardPane = React.createClass({
     var y=Number(val[0]*13);
     if(this.props.board[val[0]][val[1]]=="Enemy"){
     return (
-          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="red" stroke="red"/>
+          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="red"/>
     );
     }
   },
@@ -308,7 +438,7 @@ var BoardPane = React.createClass({
     var x=Number(val[1]*13);
     var y=Number(val[0]*13);
     return (
-          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="green" stroke="green"/>
+          <rect key={"y"+y+"x"+x} x={x} y={y} width="13" height="13" fill="green"/>
     );
   },
   renderWeapon: function(a,b){ 
@@ -316,7 +446,7 @@ var BoardPane = React.createClass({
     var y=Number(this.props.WeapLoc[0]*13);
     if(this.props.board[this.props.WeapLoc[0]][this.props.WeapLoc[1]]=="weapon"){
     return (
-          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow" stroke="yellow"/>
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="yellow"/>
     );
     }
   },
@@ -328,7 +458,7 @@ var BoardPane = React.createClass({
     var y=Number(this.props.StairLoc[0]*13);
     if(this.props.board[this.props.StairLoc[0]][this.props.StairLoc[1]]=="stair"){
     return (
-          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="purple" stroke="purple"/>
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="purple"/>
     );
     }
   },
@@ -347,20 +477,40 @@ var BoardPane = React.createClass({
     var x=Number(this.props.playerlocation[1]*13);
     var y=Number(this.props.playerlocation[0]*13);
     return (
-          <rect key={"y"+a+"x"+b} x={x} y={y} width="13" height="13" fill="blue" stroke="black"/>
+          <rect key={"y"+a+"x"+b} x={x} y={y} width="12" height="12" fill="blue" stroke="black" strokeWidth="1"/>
+          
     );
+  },
+  renderBoardCell: function(val,a){
+    var cellId=rowId+","+a;
+    if(val=="wall"){
+      return (
+            <rect key={cellId} x={a*13} y={rowId*13} width="13" height="13" fill="dimgrey"/>
+      );
+    }
+  },
+  renderBoardRow: function(val,x){
+    rowId=x;  
+    return val.map(this.renderBoardCell)
+  },
+  renderDark:function(){
+    if(this.props.darkness){
+      return <rect x={this.props.playerlocation[1]*13-500} y={this.props.playerlocation[0]*13-500} width="1013" height="1013" fill="white" fillOpacity="0" stroke="black" strokeWidth="900"/>
+    }
   },
   render: function(){
     return (
         <div id="gameboard">
-          <svg width="780" height="325">
-            <rect x="0" y="0" width="780" height="325" fill="white"/>
+          <svg width={mapWidth} height={mapHeight}>
+            <rect x="0" y="0" width={mapWidth} height={mapHeight} fill="white"/>
+            {this.props.board.map(this.renderBoardRow)}
             {this.props.hpLocation.map(this.renderHP)}
             {this.props.enemyLoc.map(this.renderEnemy)}
             {this.props.WeapLoc.map(this.renderWeapon)}
             {this.props.StairLoc.map(this.renderStair)}
             {this.props.BossLoc.map(this.renderBoss)}
             {this.props.playerlocation.map(this.renderPlayer)}
+            {this.renderDark()}
           </svg>
         </div>
     );
