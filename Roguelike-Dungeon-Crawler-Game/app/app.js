@@ -175,7 +175,7 @@ var App = React.createClass({
       "playerAtk": 8,
       "hpPack": 5, 
       "hpLocation":{},
-      "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword"],
+      "weaponType": ["None","Fighter's Sword","Master Sword","Tempered Sword","Golden Sword","Winning Blade"],
       "weaponLv": 0,  
       "WeapLoc":{},
       "StairLoc":[0,0,true],
@@ -188,6 +188,23 @@ var App = React.createClass({
       "gamestate": "playing",
       isModalOpen: false
     };
+
+  },
+  renderResetG:function(){
+    randomBoard(blankboard);
+    this.setState({
+      "dungeon": 1,
+      "enemyNum":5,
+      "playerHP": 100,
+      "playerAtk": 8,
+      "hpPack": 5,
+      "weaponLv": 0,
+      "PlayerLv": 1,
+      "PlayerExp": 0,
+      "darkness": true,
+      "gamestate": "playing",
+      isModalOpen: false  
+      });
   },
   renderStage:function(){
     var OldBoard = Object.assign([],this.state.board);
@@ -438,7 +455,7 @@ var App = React.createClass({
               <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc} darkness={this.state.darkness} />
           </div>
           <div>
-            <ModalPane isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} renderRestart={this.renderRestartG} gamestate={this.state.gamestate}/>
+            <ModalPane isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} renderRestart={this.renderRestartG} gamestate={this.state.gamestate} renderResetG={this.renderResetG}/>
           </div>
         </div>
       </div>
@@ -541,14 +558,14 @@ var BoardPane = React.createClass({
 
 var ModalPane = React.createClass({
     ConfirmRestart:function(){
-      //to finish
+      this.props.renderResetG();
     },
     render: function(){
     let close = () => this.props.closeModal();
     return (
       <Modal show={this.props.isModalOpen} onHide={close} bsSize="small">
         <Modal.Header>
-          <Modal.Title id="contained-modal-title">{this.props.gamestate}</Modal.Title>
+          <Modal.Title id="contained-modal-title" className="ModalWords"><center>{"You "+this.props.gamestate+"!!!"}</center></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <center className="ModalWords">Would you like to restart the game?</center>
