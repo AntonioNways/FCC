@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Modal= require('react-bootstrap').Modal;
 
 var rowId;
 var gwidth=80; //set the grids' gwidth
@@ -185,6 +186,7 @@ var App = React.createClass({
       "BossLoc": {},
       "darkness": true,
       "gamestate": "playing",
+      isModalOpen: false
     };
   },
   renderStage:function(){
@@ -281,7 +283,12 @@ var App = React.createClass({
               }
               this.setState({
                 "playerHP": this.state.playerHP-Enemyatk,
-              });      
+              }); 
+              if(this.state.playerHP<0){
+                this.setState({
+              "gamestate": "Lose",
+            });
+          }     
             }
           }
         }  
@@ -301,10 +308,14 @@ var App = React.createClass({
             "playerHP": this.state.playerHP-BossAtk1,
           });
           if(this.state.playerHP<0){
-            console.log("You Lose!")
+            this.setState({
+              "gamestate": "Lose",
+            });
           }
           if (this.state.boss<0&&this.state.playerHP>=0){
-            console.log("win!");
+            this.setState({
+            "gamestate": "Win",
+          });
           }
         }
         ////////////////STAIRS
@@ -351,17 +362,19 @@ var App = React.createClass({
       }
   },
   playerAction:function(event){
-    if(event.keyCode==40){
-      this.PlayerMovement(this.state.playerlocation[0]+1,this.state.playerlocation[1])
-    }
-    if(event.keyCode==37){
-      this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]-1)
-    }
-    if(event.keyCode==39){
-      this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]+1)
-    }
-    if(event.keyCode==38){
-      this.PlayerMovement(this.state.playerlocation[0]-1,this.state.playerlocation[1])
+    if(this.state.gamestate=="playing"){
+      if(event.keyCode==40){
+        this.PlayerMovement(this.state.playerlocation[0]+1,this.state.playerlocation[1])
+      }
+      if(event.keyCode==37){
+        this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]-1)
+      }
+      if(event.keyCode==39){
+        this.PlayerMovement(this.state.playerlocation[0],this.state.playerlocation[1]+1)
+      }
+      if(event.keyCode==38){
+        this.PlayerMovement(this.state.playerlocation[0]-1,this.state.playerlocation[1])
+      }
     }
   },
   componentDidMount(){
@@ -381,6 +394,9 @@ var App = React.createClass({
           "darkness": true,
         }); 
     }
+  },
+  closeModal: function() {
+    this.setState({ isModalOpen: false })
   },
   render: function() {
     return (
@@ -417,6 +433,9 @@ var App = React.createClass({
           </div>
           <div className="col-md-12 col-xs-12">
               <BoardPane board={this.state.board} playerlocation={this.state.playerlocation} hpLocation={this.state.hpLocation} enemyLoc={this.state.enemyLoc} WeapLoc={this.state.WeapLoc} StairLoc={this.state.StairLoc} dungeon={this.state.dungeon} BossLoc={this.state.BossLoc} darkness={this.state.darkness} />
+          </div>
+          <div>
+            <ModalPane isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} renderRestart={this.renderDelete} gamestate={this.state.gamestate}/>
           </div>
         </div>
       </div>
@@ -517,5 +536,27 @@ var BoardPane = React.createClass({
   }
 });
 
+var ModalPane = React.createClass({
+    ConfirmRestart:function(){
+      //to finish
+    },
+    render: function(){
+    let close = () => this.props.closeModal();
+    return (
+      <Modal show={this.props.isModalOpen} onHide={close} bsSize="small">
+        <Modal.Header>
+          <Modal.Title id="contained-modal-title">{this.props.gamestate}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <center>Would you like to restart the game?</center>
+        </Modal.Body>
+        <Modal.Footer> <center>
+          <button type="button" className="btn btn-primary" onClick={this.ConfirmRestart} id="deleteButton">Yes</button>
+          <button type="button" className="btn btn-primary" onClick={close} id="deleteButton">No</button> </center>
+        </Modal.Footer>
+      </Modal>
+    );
+  },
+});
 
 ReactDOM.render (<App />, document.getElementById("game"));
