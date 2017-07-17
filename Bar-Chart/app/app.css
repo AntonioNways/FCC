@@ -1,0 +1,12 @@
+.wall{
+  background-color: dimgrey;
+  width: 10px;
+  height: 10px;
+}
+body{
+  background-color: black;
+  color: white;
+}
+.ModalWords{
+  color: black;
+}
