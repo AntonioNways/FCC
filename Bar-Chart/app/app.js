@@ -1168,13 +1168,19 @@ var App = React.createClass({
   },
   drawAxis(){
     var x = d3.scaleLinear().domain([1947,2015]).range([50, graphWidth-8]);
-    var y = d3.scaleLinear().domain([20000,0]).range([10, 430]);
+    var y = d3.scaleLinear().domain([18900,0]).range([8, 430]);
     var svg=d3.select("svg");
     svg.append("g").attr("transform", "translate(0," + 430+ ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("")));
     svg.append("g").attr("transform", "translate(50," + 0+ ")")
       .call(d3.axisLeft(y));
-      
+    svg.append("text")             
+      .attr("transform","rotate(-90)")
+      .attr("y", 50) //move from the left to right
+      .attr("x",-100) //move downward
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Gross Domestic Product, USA");
   },
   render: function() {
     return (
