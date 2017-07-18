@@ -1126,16 +1126,16 @@ var data = {
   ]
 }
 
-var margin = {top:20, right: 10, bottom:100, left:40}
-var grapHeight= 480;
-var graphWidth= data.data.length*3.25;
+var margin = {top:20, right: 10, bottom:50, left:40}
+var graphHeight= 480;
+var graphWidth= data.data.length*3+50;
 var barPadding=.15;
 
-var barlengthdata=[];
+
+var barlengthdata=[]; //used for drawing the bar
 for (var i=0;i<data.data.length;i++){
   barlengthdata.push(data.data[i][1]);
 }
-
 
 
 var App = React.createClass({
@@ -1147,37 +1147,48 @@ var App = React.createClass({
   },
   componentDidMount(){
     {this.drawbar()}
+    {this.drawAxis()}
   },
   drawbar(){
     d3.select("svg").selectAll("rect")
-      .data(barlengthdata)
+      .data(data.data)
       .enter()
       .append("rect")
       .attr("x",function(d,i){
-        return i*3;
+        return i*3+50;
       })
       .attr("y",function(d,i){
-        return grapHeight-d/45;
+        return graphHeight-d[1]/45-margin.bottom;
       })
       .attr("width",3-barPadding)
-      .attr("height",420)
+      .attr("height", function(d,i){
+        return d[1]/45;
+      })
       .attr("fill","blue");
+  },
+  drawAxis(){
+    var x = d3.scaleLinear().domain([1947,2015]).range([50, graphWidth-8]);
+    var y = d3.scaleLinear().domain([20000,0]).range([10, 430]);
+    var svg=d3.select("svg");
+    svg.append("g").attr("transform", "translate(0," + 430+ ")")
+      .call(d3.axisBottom(x).tickFormat(d3.format("")));
+    svg.append("g").attr("transform", "translate(50," + 0+ ")")
+      .call(d3.axisLeft(y));
+      
   },
   render: function() {
     return (
       <div>
-        <center><h1>Bar Graph</h1></center>
+        <center><h1>Gross Domestic Product</h1></center>
         <div id="header"></div>
         <div className="container">
           <div className="col-md-12 col-xs-12">
-            <button className="btn btn btn-danger spaceB" >Restart</button>{" "}
-            <button className="btn btn-info" >Toggle Darkness</button>
           </div>
           <div className="col-md-12 col-xs-12">
             {console.log(barlengthdata)}
           </div>
           <div className="col-md-12 col-xs-12">
-            <svg width={graphWidth} height={grapHeight}>
+            <svg width={graphWidth+5} height={graphHeight}>
               
               </svg> 
           </div>
