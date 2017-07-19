@@ -413,12 +413,12 @@ var App = React.createClass({
        });;
   },
   drawAxis(){
-    var x = d3.scaleLinear().domain([1947,2015]).range([50, graphWidth-8]);
-    var y = d3.scaleLinear().domain([18900,0]).range([8, graphHeight-80]);
+    var x = d3.scaleLinear().domain([230,0]).range([130, graphWidth-110]);
+    var y = d3.scaleLinear().domain([0,35]).range([85, graphHeight-45]);
     var svg=d3.select("svg");
-    svg.append("g").attr("transform", "translate(0," + graphHeight-100+ ")")
+    svg.append("g").attr("transform", "translate(0," + 385+ ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("")));
-    svg.append("g").attr("transform", "translate(50," + 0+ ")")
+    svg.append("g").attr("transform", "translate(130," + 0+ ")")
       .call(d3.axisLeft(y));
     svg.append("text")             
       .attr("transform","rotate(-90)")
