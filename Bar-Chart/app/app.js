@@ -1228,4 +1228,4 @@ var App = React.createClass({
 });
 
 
-ReactDOM.render (<App />, document.getElementById("game"));
+ReactDOM.render (<App />, document.getElementById("graphD3"));
