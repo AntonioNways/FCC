@@ -1,5 +1,5 @@
 # PMarkdown previewer
-D3 Bar graph project for FreeCodeCamp
+D3  Scatterplot Graph project for FreeCodeCamp
 
 ## Dependencies:
 * React
