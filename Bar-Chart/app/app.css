@@ -1,8 +1,15 @@
-.wall{
-  background-color: dimgrey;
-  width: 10px;
-  height: 10px;
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 90px;
+  height: 32px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
-.ModalWords{
-  color: black;
+.barSel:hover {
+  fill: silver;
 }

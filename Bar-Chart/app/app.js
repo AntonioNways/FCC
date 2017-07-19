@@ -1126,6 +1126,12 @@ var data = {
   ]
 }
 
+function redate(data){
+  var month= {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September", "10":"October", "11":"November", "12":"December"};
+  var splits = data.split("-");
+  return (month[splits[1]]+" "+splits[0])
+}
+
 var margin = {top:20, right: 10, bottom:50, left:40}
 var graphHeight= 480;
 var graphWidth= data.data.length*3+50;
@@ -1150,10 +1156,12 @@ var App = React.createClass({
     {this.drawAxis()}
   },
   drawbar(){
+    var toolT=d3.select("#tooltip").style("opacity",0);
     d3.select("svg").selectAll("rect")
       .data(data.data)
       .enter()
       .append("rect")
+      .attr("class", "barSel")
       .attr("x",function(d,i){
         return i*3+50;
       })
@@ -1164,7 +1172,20 @@ var App = React.createClass({
       .attr("height", function(d,i){
         return d[1]/45;
       })
-      .attr("fill","blue");
+      .attr("fill","blue")
+      .on("mouseover", function(d,i) {//tooltip function here
+       toolT.transition()
+         .duration(300)
+         .style("opacity", .9);
+       toolT.html(redate(d[0]) + "<br/>" +"<b>"+ d[1]+"Billion </b>")
+         .style("left", (d3.event.pageX) -95 + "px")
+         .style("top", (d3.event.pageY) -100 + "px");
+       })
+     .on("mouseout", function(d) {
+       toolT.transition()
+         .duration(500)
+         .style("opacity", 0);
+       });;
   },
   drawAxis(){
     var x = d3.scaleLinear().domain([1947,2015]).range([50, graphWidth-8]);
@@ -1191,11 +1212,11 @@ var App = React.createClass({
           <div className="col-md-12 col-xs-12">
           </div>
           <div className="col-md-12 col-xs-12">
-            {console.log(barlengthdata)}
+            {console.log(data.data)}
           </div>
           <div className="col-md-12 col-xs-12">
+            <div className="tooltip" id="tooltip"></div>
             <svg width={graphWidth+5} height={graphHeight}>
-              
               </svg> 
           </div>
           <div>
