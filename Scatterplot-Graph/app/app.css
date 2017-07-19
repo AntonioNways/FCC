@@ -13,3 +13,9 @@ div.tooltip {
 .barSel:hover {
   fill: silver;
 }
+.AName{
+  font: 8.5px sans-serif;
+}
+.clear{
+  color: #5A5A5A;
+}

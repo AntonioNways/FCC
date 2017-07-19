@@ -377,10 +377,10 @@ var App = React.createClass({
     };
   },
   componentDidMount(){
-    {this.drawbar()}
+    {this.drawDots()}
     {this.drawAxis()}
   },
-  drawbar(){
+  drawDots(){
     var toolT=d3.select("#tooltip").style("opacity",0);
     d3.select("svg").selectAll("circle")
       .data(data)
@@ -390,14 +390,21 @@ var App = React.createClass({
         return allegations(data[i]["Doping"]);
       })
       .attr("cx",function(d,i){
-        console.log(data[i]["Seconds"]);
         return (data[i]["Seconds"]-2210)*-2.25+650;
       })
       .attr("cy",function(d,i){
-        return i*8+100;
+        return i*8.5+100;
       })
       .attr("r",3)
-      .attr("fill","blue")
+      .attr("fill",function(d,i){
+        var alleg=allegations(data[i]["Doping"]);
+        if(alleg=="clear"){
+          return "#5A5A5A"
+        }
+        else{
+          return "#E95151"
+        }
+      })
       .on("mouseover", function(d,i) {//tooltip function here
        toolT.transition()
          .duration(300)
@@ -411,35 +418,58 @@ var App = React.createClass({
          .duration(500)
          .style("opacity", 0);
        });;
+       ///add label to dots
+       d3.select("svg").selectAll("text")
+       .data(data)
+       .enter()
+       .append("text")
+       .text(function (d,i){
+         return d["Name"];
+       })
+      .attr("x",function(d,i){
+        return (data[i]["Seconds"]-2210)*-2.25+657;
+      })
+      .attr("y",function(d,i){
+        return i*8.5+103;
+      })
+      .attr("class", "AName")
   },
   drawAxis(){
-    var x = d3.scaleLinear().domain([230,0]).range([130, graphWidth-110]);
-    var y = d3.scaleLinear().domain([0,35]).range([85, graphHeight-45]);
+    var x = d3.scaleLinear().domain([230/60,0]).range([130, graphWidth-110]);
+    var y = d3.scaleLinear().domain([0,35]).range([95, graphHeight-35]);
     var svg=d3.select("svg");
-    svg.append("g").attr("transform", "translate(0," + 385+ ")")
+    svg.append("g").attr("transform", "translate(0," + 395+ ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("")));
     svg.append("g").attr("transform", "translate(130," + 0+ ")")
       .call(d3.axisLeft(y));
     svg.append("text")             
+      .attr("transform","")
+      .attr("y", 420) //move from the left to right
+      .attr("x",400) //move downward
+      .style("text-anchor", "middle")
+      .text("Minutes Behind Fastest Time");
+    svg.append("text")             
       .attr("transform","rotate(-90)")
-      .attr("y", 50) //move from the left to right
-      .attr("x",-100) //move downward
+      .attr("y", 85) //move from the left to right
+      .attr("x",-220) //move downward
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Gross Domestic Product, USA");
+      .text("Ranking");
+      
   },
   render: function() {
     return (
       <div>
-        <center><h1>Doping in Professional Bicycle Racing</h1></center>
         <div id="header"></div>
         <div className="container">
+          <center><h2>Doping in Professional Bicycle Racing</h2><h4>35 Fastest times up Alpe d'Huez </h4>(Normalized to 13.8km distance)</center>
           <div className="col-md-12 col-xs-12">
+            
           </div>
           <div className="col-md-12 col-xs-12">
-            {console.log(data.data)}
           </div>
-          <div className="col-md-12 col-xs-12">
+          <div className="col-md-1 col-xs-1"></div>
+          <div className="col-md-11 col-xs-11">
             <div className="tooltip" id="tooltip"></div>
             <svg width={graphWidth+5} height={graphHeight}>
               </svg> 
