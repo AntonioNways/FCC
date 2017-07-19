@@ -10,12 +10,17 @@ div.tooltip {
   border-radius: 8px;
   pointer-events: none;
 }
-.barSel:hover {
-  fill: silver;
+.HoverE:hover {
+  stroke: black;
+  cursor: pointer;
 }
 .AName{
   font: 8.5px sans-serif;
 }
 .clear{
   color: #5A5A5A;
+}
+.TLegend{
+  font: 10.5px sans-serif;
+  text-decoration: underline;
 }

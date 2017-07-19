@@ -356,7 +356,7 @@ var data = [
 
 
 var margin = {top:20, right: 10, bottom:50, left:40}
-var graphHeight= 360+margin.top+margin.bottom;
+var graphHeight= 365+margin.top+margin.bottom;
 var graphWidth= 720+margin.right+margin.left;
 var barPadding=.15;
 
@@ -382,12 +382,12 @@ var App = React.createClass({
   },
   drawDots(){
     var toolT=d3.select("#tooltip").style("opacity",0);
-    d3.select("svg").selectAll("circle")
+    d3.select("#graphDot").selectAll("circle")
       .data(data)
       .enter()
       .append("circle")
       .attr("class", function(d,i){
-        return allegations(data[i]["Doping"]);
+        return allegations(data[i]["Doping"])+", HoverE";
       })
       .attr("cx",function(d,i){
         return (data[i]["Seconds"]-2210)*-2.25+650;
@@ -395,7 +395,7 @@ var App = React.createClass({
       .attr("cy",function(d,i){
         return i*8.5+100;
       })
-      .attr("r",3)
+      .attr("r",3.25)
       .attr("fill",function(d,i){
         var alleg=allegations(data[i]["Doping"]);
         if(alleg=="clear"){
@@ -419,7 +419,7 @@ var App = React.createClass({
          .style("opacity", 0);
        });;
        ///add label to dots
-       d3.select("svg").selectAll("text")
+       d3.select("#graphDot").selectAll("text")
        .data(data)
        .enter()
        .append("text")
@@ -444,7 +444,7 @@ var App = React.createClass({
       .call(d3.axisLeft(y));
     svg.append("text")             
       .attr("transform","")
-      .attr("y", 420) //move from the left to right
+      .attr("y", 430) //move from the left to right
       .attr("x",400) //move downward
       .style("text-anchor", "middle")
       .text("Minutes Behind Fastest Time");
@@ -464,14 +464,19 @@ var App = React.createClass({
         <div className="container">
           <center><h2>Doping in Professional Bicycle Racing</h2><h4>35 Fastest times up Alpe d'Huez </h4>(Normalized to 13.8km distance)</center>
           <div className="col-md-12 col-xs-12">
-            
-          </div>
-          <div className="col-md-12 col-xs-12">
           </div>
           <div className="col-md-1 col-xs-1"></div>
           <div className="col-md-11 col-xs-11">
             <div className="tooltip" id="tooltip"></div>
-            <svg width={graphWidth+5} height={graphHeight}>
+            <svg width={graphWidth+5} height={graphHeight+5}>
+              <g id="graphDot"></g>
+              <g>
+              <circle className="clear" cx="640" cy="280" r="3" fill="#5A5A5A"></circle>
+              <text x="645" y="283" className="AName">No doping allegations</text>
+              <circle className="clear" cx="640" cy="305" r="3" fill="#E95151"></circle>
+              <text x="645" y="309" className="AName">Riders with doping allegations</text>
+              <text x="670" y="260" className="TLegend">Legend</text></g>
+              <rect  x="620" y="245" width="225" height="85" fill="#81C9A7" fillOpacity=".15"/>
               </svg> 
           </div>
           <div>
