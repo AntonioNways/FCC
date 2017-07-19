@@ -390,7 +390,8 @@ var App = React.createClass({
         return allegations(data[i]["Doping"]);
       })
       .attr("cx",function(d,i){
-        return (36-i)*19+180;
+        console.log(data[i]["Seconds"]);
+        return (data[i]["Seconds"]-2210)*-2.25+650;
       })
       .attr("cy",function(d,i){
         return i*8+100;
