@@ -15851,9 +15851,9 @@ var App = React.createClass({
        toolT.transition()
          .duration(300)
          .style("opacity", .9);
-       toolT.html("<b>"+d["Name"]+":"+d["Nationality"] +"<br/>"+ "Year:"+d["Year"]+", Time:"+d["Time"]+"<br/>"+"<br/>"+d["Doping"]+"</b>")
-         .style("left", 170 + "px")
-         .style("top", 60 + "px");
+       toolT.html("<b>"+months[d["month"]]+" "+d["year"] +"<br/>"+(8.66+d["variance"]).toFixed(3)+"°C"+"<br/>"+"</b>"+"<small>"+d["variance"]+"°C"+"</small>")
+         .style("left", (d3.event.pageX)-140 + "px")
+         .style("top", (d3.event.pageY)-235  + "px");
        })
      .on("mouseout", function(d) {
        toolT.transition()
