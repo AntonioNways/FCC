@@ -15773,13 +15773,13 @@ var data = {
 }
 
 
-var margin = {top:65, right: 10, bottom:50, left:40}
+var margin = {top:65, right: 90, bottom:50, left:40}
 var graphHeight= 305+margin.top+margin.bottom;
-var graphWidth= 720+margin.right+margin.left;
+var graphWidth= 930+margin.right+margin.left;
 var barPadding=.15;
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 var yAxisSpacing = graphHeight/12-5;
-var MAxisSpacing = [0*yAxisSpacing,1*yAxisSpacing,2*yAxisSpacing,3*yAxisSpacing,4*yAxisSpacing,5*yAxisSpacing,6*yAxisSpacing,7*yAxisSpacing,8*yAxisSpacing,9*yAxisSpacing,10*yAxisSpacing,11*yAxisSpacing]
+var MAxisSpacing = [0*yAxisSpacing,1*yAxisSpacing,2*yAxisSpacing,3*yAxisSpacing,4*yAxisSpacing,5*yAxisSpacing,6*yAxisSpacing,7*yAxisSpacing,8*yAxisSpacing,9*yAxisSpacing,10*yAxisSpacing,11*yAxisSpacing,0]
 
 var App = React.createClass({
   getInitialState: function() {
@@ -15794,18 +15794,19 @@ var App = React.createClass({
   },
   drawDots(){
     var toolT=d3.select("#tooltip").style("opacity",0);
-    d3.select("#graphDot").selectAll("circle")
+    d3.select("#graphSq").selectAll("rect")
       .data(data.monthlyVariance)
       .enter()
-      .append("circle")
+      .append("rect")
       .attr("class", "HeatBox")
-      .attr("cx",function(d,i){
-        return i+650;
+      .attr("x",function(d,i){
+        return 50+(d["year"]-1753)*3.5;
       })
-      .attr("cy",function(d,i){
-        return i*8.5+margin.top;
+      .attr("y",function(d,i){
+        return d["month"]*yAxisSpacing-yAxisSpacing/2;
       })
-      .attr("r",3.25)
+      .attr("width",3.2)
+      .attr("height", yAxisSpacing-1)//remove one when colour is added
       .attr("fill", "red")
       .on("mouseover", function(d,i) {//tooltip function here
        toolT.transition()
@@ -15821,7 +15822,7 @@ var App = React.createClass({
          .style("opacity", 0);
        });;
        ///add label to dots
-       d3.select("#graphDot").selectAll("text")
+       d3.select("#graphSq").selectAll("text")
        .data(data)
        .enter()
        .append("text")
@@ -15837,26 +15838,26 @@ var App = React.createClass({
       .attr("class", "AName")
   },
   drawAxis(){
-    var x = d3.scaleLinear().domain([230/60,0]).range([130, graphWidth-110]);
+    var x = d3.scaleLinear().domain([1753,2015]).range([50, graphWidth-90]);
     var y = d3.scaleOrdinal().domain(months).range(MAxisSpacing);
     var svg=d3.select("svg");
-    svg.append("g").attr("transform", "translate(0," + 360+ ")")
+    svg.append("g").attr("transform", "translate(0," + 375+ ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("")));
-    svg.append("g").attr("transform", "translate(130," + 30+ ")")
+    svg.append("g").attr("transform", "translate(50," + 30+ ")")
       .call(d3.axisLeft(y));
     svg.append("text")             
       .attr("transform","")
-      .attr("y", 395) //move downward
-      .attr("x",400) //move from the left to right
+      .attr("y", 410) //move downward
+      .attr("x",graphWidth/2) //move from the left to right
       .style("text-anchor", "middle")
-      .text("Minutes Behind Fastest Time");
+      .text("Years");
     svg.append("text")             
       .attr("transform","rotate(-90)")
-      .attr("y", 85) //move downward
-      .attr("x",-220) //move from the left to right
+      .attr("y", 5) //move from the left to right
+      .attr("x",-210) //move downward
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Ranking");
+      .text("Months");
       
   },
   render: function() {
@@ -15864,14 +15865,13 @@ var App = React.createClass({
       <div>
         <div id="header"></div>
         <div className="container">
-          <center><h2>Doping in Professional Bicycle Racing</h2><h4>35 Fastest times up Alpe d'Huez </h4>(Normalized to 13.8km distance)</center>
+          <center><h1>Monthly Global Land-Surface Temperature</h1><h2>1753 - 2015</h2><p className="titleHeading">Temperatures are in Celsius and reported as anomalies relative to the Jan 1951-Dec 1980 average.</p><p className="titleHeading">Estimated Jan 1951-Dec 1980 absolute temperature ℃: 8.66 +/- 0.07</p></center>
           <div className="col-md-12 col-xs-12">
           </div>
-          <div className="col-md-1 col-xs-1"></div>
-          <div className="col-md-11 col-xs-11">
+          <div className="col-md-12 col-xs-12">
             <div className="tooltip" id="tooltip"></div>
             <svg width={graphWidth+5} height={graphHeight+5}>
-              <g id="graphDot"></g>
+              <g id="graphSq"></g>
               <g>
               <circle className="clear" cx="640" cy="280" r="3" fill="#5A5A5A"></circle>
               <text x="645" y="283" className="AName">No doping allegations</text>

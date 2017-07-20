@@ -21,6 +21,10 @@ div.tooltip {
   color: #5A5A5A;
 }
 .TLegend{
-  font: 10.5px sans-serif;
+  font: 11px sans-serif;
   text-decoration: underline;
+  font-weight: bold;
+}
+.titleHeading{
+  font: 12px sans-serif;
 }
