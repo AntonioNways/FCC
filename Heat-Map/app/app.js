@@ -15781,6 +15781,43 @@ var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
 var yAxisSpacing = graphHeight/12-5;
 var MAxisSpacing = [0*yAxisSpacing,1*yAxisSpacing,2*yAxisSpacing,3*yAxisSpacing,4*yAxisSpacing,5*yAxisSpacing,6*yAxisSpacing,7*yAxisSpacing,8*yAxisSpacing,9*yAxisSpacing,10*yAxisSpacing,11*yAxisSpacing,0]
 
+function recodeVar(input1){
+  var test=input1+8.66
+  if(test<2.7){
+    return "#661aff"
+  }
+  if(test<3.9){
+    return "#8080ff"
+  }
+  if(test<5){
+    return "#99ccff"
+  }
+  if(test<6.1){
+    return "#99ff99"
+  }
+  if(test<7.2){
+    return "#ccffcc"
+  }
+  if(test<8.3){
+    return "#ffffcc"
+  }
+  if(test<9.4){
+    return "#ffcc99"
+  }
+  if(test<10.5){
+    return "#ff9966"
+  }
+  if(test<11.6){
+    return "#ff6600"
+  }
+  if(test<12.7){
+    return "#ff0000"
+  }
+  if(test>=12.7){
+    return "#800000"
+  }
+}
+
 var App = React.createClass({
   getInitialState: function() {
     return { 
@@ -15806,8 +15843,10 @@ var App = React.createClass({
         return d["month"]*yAxisSpacing-yAxisSpacing/2;
       })
       .attr("width",3.2)
-      .attr("height", yAxisSpacing-1)//remove one when colour is added
-      .attr("fill", "red")
+      .attr("height", yAxisSpacing)
+      .attr("fill", function(d,i){
+        return recodeVar(d["variance"]);
+      })
       .on("mouseover", function(d,i) {//tooltip function here
        toolT.transition()
          .duration(300)
