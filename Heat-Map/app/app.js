@@ -15776,10 +15776,10 @@ var data = {
 var margin = {top:65, right: 90, bottom:50, left:40}
 var graphHeight= 305+margin.top+margin.bottom;
 var graphWidth= 930+margin.right+margin.left;
-var barPadding=.15;
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 var yAxisSpacing = graphHeight/12-5;
-var MAxisSpacing = [0*yAxisSpacing,1*yAxisSpacing,2*yAxisSpacing,3*yAxisSpacing,4*yAxisSpacing,5*yAxisSpacing,6*yAxisSpacing,7*yAxisSpacing,8*yAxisSpacing,9*yAxisSpacing,10*yAxisSpacing,11*yAxisSpacing,0]
+var MAxisSpacing = [0*yAxisSpacing,1*yAxisSpacing,2*yAxisSpacing,3*yAxisSpacing,4*yAxisSpacing,5*yAxisSpacing,6*yAxisSpacing,7*yAxisSpacing,8*yAxisSpacing,9*yAxisSpacing,10*yAxisSpacing,11*yAxisSpacing,0];
+var legendData =[["#661aff",0],["#8080ff",2.7],["#99ccff",3.9],["#99ff99",5.0],["#ccffcc",6.1],["#ffffcc",7.2],["#ffcc99",8.3],["#ff9966",9.4],["#ff6600",10.5],["#ff0000",11.6],["#800000",12.7]];
 
 function recodeVar(input1){
   var test=input1+8.66
@@ -15828,6 +15828,7 @@ var App = React.createClass({
   componentDidMount(){
     {this.drawDots()}
     {this.drawAxis()}
+    {this.drawLengend()}
   },
   drawDots(){
     var toolT=d3.select("#tooltip").style("opacity",0);
@@ -15847,34 +15848,21 @@ var App = React.createClass({
       .attr("fill", function(d,i){
         return recodeVar(d["variance"]);
       })
-      .on("mouseover", function(d,i) {//tooltip function here
+      //tooltip function here
+      .on("mouseover", function(d,i) {
        toolT.transition()
          .duration(300)
          .style("opacity", .9);
        toolT.html("<b>"+months[d["month"]]+" "+d["year"] +"<br/>"+(8.66+d["variance"]).toFixed(3)+"°C"+"<br/>"+"</b>"+"<small>"+d["variance"]+"°C"+"</small>")
-         .style("left", (d3.event.pageX)-140 + "px")
+         .style("left", (d3.event.pageX)-130 + "px")
          .style("top", (d3.event.pageY)-235  + "px");
        })
      .on("mouseout", function(d) {
        toolT.transition()
          .duration(500)
          .style("opacity", 0);
-       });;
+       });
        ///add label to dots
-       d3.select("#graphSq").selectAll("text")
-       .data(data)
-       .enter()
-       .append("text")
-       .text(function (d,i){
-         return d["Name"];
-       })
-      .attr("x",function(d,i){
-        return (data[i]["Seconds"]-2210)*-2.25+657;
-      })
-      .attr("y",function(d,i){
-        return i*8.5+margin.top+3;
-      })
-      .attr("class", "AName")
   },
   drawAxis(){
     var x = d3.scaleLinear().domain([1753,2015]).range([50, graphWidth-90]);
@@ -15897,7 +15885,39 @@ var App = React.createClass({
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("Months");
-      
+  },
+  drawLengend(){
+    d3.select("#graphLegend").selectAll("rect")
+      .data(legendData)
+      .enter()
+      .append("rect")
+      .attr("class", "HeatBox")
+      .attr("x",function(d,i){
+        return 980;
+      })
+      .attr("y",function(d,i){
+        return i*18+30;
+      })
+      .attr("width",18)
+      .attr("height", 18)
+      .attr("fill", function(d,i){
+        return d[0];
+      })
+       ///add label to squares
+       d3.select("#graphLegend").selectAll("text")
+       .data(legendData)
+       .enter()
+       .append("text")
+       .text(function (d,i){
+         return d[1].toFixed(1);
+       })
+      .attr("x",function(d,i){
+        return 1003;
+      })
+      .attr("y",function(d,i){
+        return i*18+43;
+      })
+      .attr("class", "TLegend")
   },
   render: function() {
     return (
@@ -15911,13 +15931,7 @@ var App = React.createClass({
             <div className="tooltip" id="tooltip"></div>
             <svg width={graphWidth+5} height={graphHeight+5}>
               <g id="graphSq"></g>
-              <g>
-              <circle className="clear" cx="640" cy="280" r="3" fill="#5A5A5A"></circle>
-              <text x="645" y="283" className="AName">No doping allegations</text>
-              <circle className="clear" cx="640" cy="305" r="3" fill="#E95151"></circle>
-              <text x="645" y="309" className="AName">Riders with doping allegations</text>
-              <text x="670" y="260" className="TLegend">Legend</text></g>
-              <rect  x="620" y="245" width="225" height="85" fill="#81C9A7" fillOpacity=".15"/>
+              <g id="graphLegend"></g>
               </svg> 
           </div>
           <div>
