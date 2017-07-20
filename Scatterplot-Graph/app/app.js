@@ -355,8 +355,8 @@ var data = [
 ]
 
 
-var margin = {top:20, right: 10, bottom:50, left:40}
-var graphHeight= 365+margin.top+margin.bottom;
+var margin = {top:65, right: 10, bottom:50, left:40}
+var graphHeight= 305+margin.top+margin.bottom;
 var graphWidth= 720+margin.right+margin.left;
 var barPadding=.15;
 
@@ -393,7 +393,7 @@ var App = React.createClass({
         return (data[i]["Seconds"]-2210)*-2.25+650;
       })
       .attr("cy",function(d,i){
-        return i*8.5+100;
+        return i*8.5+margin.top;
       })
       .attr("r",3.25)
       .attr("fill",function(d,i){
@@ -409,9 +409,9 @@ var App = React.createClass({
        toolT.transition()
          .duration(300)
          .style("opacity", .9);
-       toolT.html("test" +"<br/>" +"<b>"+"test"+"Billion </b>")
-         .style("left", 95 + "px")
-         .style("top", 100 + "px");
+       toolT.html("<b>"+d["Name"]+":"+d["Nationality"] +"<br/>"+ "Year:"+d["Year"]+", Time:"+d["Time"]+"<br/>"+"<br/>"+d["Doping"]+"</b>")
+         .style("left", 170 + "px")
+         .style("top", 60 + "px");
        })
      .on("mouseout", function(d) {
        toolT.transition()
@@ -430,28 +430,28 @@ var App = React.createClass({
         return (data[i]["Seconds"]-2210)*-2.25+657;
       })
       .attr("y",function(d,i){
-        return i*8.5+103;
+        return i*8.5+margin.top+3;
       })
       .attr("class", "AName")
   },
   drawAxis(){
     var x = d3.scaleLinear().domain([230/60,0]).range([130, graphWidth-110]);
-    var y = d3.scaleLinear().domain([0,35]).range([95, graphHeight-35]);
+    var y = d3.scaleLinear().domain([0,35]).range([65, graphHeight-margin.top+5]);
     var svg=d3.select("svg");
-    svg.append("g").attr("transform", "translate(0," + 395+ ")")
+    svg.append("g").attr("transform", "translate(0," + 360+ ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("")));
     svg.append("g").attr("transform", "translate(130," + 0+ ")")
       .call(d3.axisLeft(y));
     svg.append("text")             
       .attr("transform","")
-      .attr("y", 430) //move from the left to right
-      .attr("x",400) //move downward
+      .attr("y", 395) //move downward
+      .attr("x",400) //move from the left to right
       .style("text-anchor", "middle")
       .text("Minutes Behind Fastest Time");
     svg.append("text")             
       .attr("transform","rotate(-90)")
-      .attr("y", 85) //move from the left to right
-      .attr("x",-220) //move downward
+      .attr("y", 85) //move downward
+      .attr("x",-220) //move from the left to right
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("Ranking");
