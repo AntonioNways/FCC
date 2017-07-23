@@ -520,8 +520,8 @@ var radius=8;
 function tickActions() {
     //update positions each tick of the simulation (assume they are circle)
        node
-        .attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-        .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+        .style("left", function(d) { return (d.x = Math.max(16, Math.min(width - 16, d.x)))+ "px"; })
+        .style("top", function(d) { return (d.y = Math.max(16, Math.min(height - 16, d.y)))+ "px"; });
         
     //update link positions (will need to update to include padding later on when circle is changed to flag)
     link
@@ -575,21 +575,21 @@ simulation.on("tick", tickActions);
 
     var toolT=d3.select("#tooltip").style("opacity",0);
     var svg=d3.select("svg");
-    var node = svg.append("g").selectAll("circle")
+    var node = d3.select(".flagBox").selectAll("img")
       .data(data.nodes)
       .enter()
-      .append("circle")
-      .attr("class", "nodes")
-      .attr("r", radius)
-      .attr("fill", "silver")
+      .append("img")
+      .attr("class", function (d,i){
+				return "flag famfamfam-flag-"+d.code;
+			})
       //tooltip function here
       .on("mouseover", function(d,i) {
        toolT.transition()
          .duration(300)
          .style("opacity", .9);
-       toolT.html("Here")
-         .style("left", (d3.event.pageX)-130 + "px")
-         .style("top", (d3.event.pageY)-235  + "px");
+       toolT.html(d.country)
+         .style("left", (d3.event.pageX)-55 + "px")
+         .style("top", (d3.event.pageY)-88 + "px");
        })
      .on("mouseout", function(d) {
        toolT.transition()
