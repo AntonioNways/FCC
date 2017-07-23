@@ -1,5 +1,5 @@
 # PMarkdown previewer
-D3 Force-Directed-Graph project for FreeCodeCamp
+D3 Accross-the-Globe map project for FreeCodeCamp
 
 ## Dependencies:
 * React

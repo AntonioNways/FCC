@@ -1,7 +1,7 @@
 {
-  "name": "Force-Directed-Graph",
+  "name": "Accross-the-Globe-Map",
   "version": "0.1.0",
-  "description": "Force-Directed-Graph D3 project for FreeCodeCamp.",
+  "description": "Accross-the-Globe D3 project for FreeCodeCamp.",
   "private": true,
   "scripts": {
     "start-webpack-server": "webpack-dev-server --hot --inline --colors --progress",
