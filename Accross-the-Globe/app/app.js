@@ -24948,6 +24948,13 @@ var radius=8;
 var svg=d3.select("svg");
 var g = svg.append("g");
 
+var projection = d3.geo.equirectangular() //tells d3 that we are using a rectangular full map for geolocation
+                        .scale(133)
+                        .translate([width / 2-19, height / 2+35]) //tell the systemt that the point 0,0 is in the middle
+                        .precision(.2);
+
+var path = d3.geo.path()
+    .projection(projection);
 
 //add zoom
 var zoom = d3.behavior.zoom()
@@ -24966,27 +24973,31 @@ function zoomed(){
   g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 ///
+ var worldMap = g.append("image")
+      .attr("xlink:href","https://openclipart.org/image/2400px/svg_to_png/1733/molumen-world-map-1.png")
+      .attr("x", 5)
+      .attr("width", 1000)
+			.attr("height", 500*.95);
 
     var toolT=d3.select("#tooltip").style("opacity",0);
     g.selectAll("circle")
       .data(data.features)
       .enter()
       .append("circle")
-      .attr("cx",function(d,i){
+      .attr("transform", function(d) {
         if(d.geometry==null){
-          return 5
+          return null
         }
         else{
-        return 3*d.geometry.coordinates[0]+width/2;
-        }
+      return "translate(" + projection([
+      d.geometry.coordinates[0],
+      d.geometry.coordinates[1]*1.13
+        ]) + ")";}
       })
-      .attr("cy",function(d,i){
-        return 2*i;
-      })
-      .attr("r",5)
+      .attr("r",2)
       .attr("fill","#5A5A5A")
       .attr("stroke","white")
-      .attr("stroke-width", "0.5")
+      .attr("stroke-width", "0.3")
       //tooltip function here
       .on("mouseover", function(d,i) {
        toolT.transition()
@@ -25001,7 +25012,3 @@ function zoomed(){
          .duration(500)
          .style("opacity", 0);
        });
-
-
-
-console.log("test")
