@@ -18,8 +18,11 @@ div.tooltip {
   color: white;
 }
 
-.test{
+.settingB{
   position: absolute;
+  top: 0px;
+  height: 500px;
+  width: 1000px;
 }
 
 .node{
