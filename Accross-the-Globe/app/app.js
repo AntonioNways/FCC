@@ -516,21 +516,6 @@ var width= 1000;
 var radius=8;
 
 //Create simulation
-
-function tickActions() {
-    //update positions each tick of the simulation (assume they are circle)
-       node
-        .style("left", function(d) { return (d.x = Math.max(16, Math.min(width - 16, d.x)))+ "px"; })
-        .style("top", function(d) { return (d.y = Math.max(16, Math.min(height - 16, d.y)))+ "px"; });
-        
-    //update link positions (will need to update to include padding later on when circle is changed to flag)
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-} 
-
 function dragStart(d) {
  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
@@ -548,30 +533,6 @@ function dragEnd(d) {
   d.fx = null;
   d.fy = null;
 }
-
-
-
-
-  var simulation = d3.forceSimulation()
-					.nodes(data.nodes); //tells the simulation how many nodes there are and who are they
-
-var linkForce =  d3.forceLink(data.links) // link the target number to the country, if the target has no name, it will default to the indext
-                        .id(function(d) { 
-													return d.index; }); 
-
-var chargeForce = d3.forceManyBody() //create force acting on the node
-    .strength(-5); //determine if the node repel (negative) or attract (positive) to each other with how many force
-
-var centerForce = d3.forceCenter(width / 2, height / 2); // where the center of the node should attract to
-
-simulation //run simulation with the following forces
-    .force("chargeForce", chargeForce)
-    .force("centerForce", centerForce)
-    .force("links",linkForce);
-		
-
-//add tick instructions: 
-simulation.on("tick", tickActions);
 
     var toolT=d3.select("#tooltip").style("opacity",0);
     var svg=d3.select("svg");
