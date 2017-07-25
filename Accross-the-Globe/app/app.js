@@ -24948,9 +24948,10 @@ var radius=8;
 var svg=d3.select("svg");
 var g = svg.append("g");
 
+
 var projection = d3.geo.equirectangular() //tells d3 that we are using a rectangular full map for geolocation
                         .scale(133)
-                        .translate([width / 2-19, height / 2+35]) //tell the systemt that the point 0,0 is in the middle
+                        .translate([width / 2-19, height / 2+43]) //tell the systemt that the point 0,0 is in the middle
                         .precision(.2);
 
 var path = d3.geo.path()
@@ -24984,6 +24985,7 @@ function zoomed(){
       .data(data.features)
       .enter()
       .append("circle")
+      .style("opacity", .7)
       .attr("transform", function(d) {
         if(d.geometry==null){
           return null
@@ -24991,10 +24993,12 @@ function zoomed(){
         else{
       return "translate(" + projection([
       d.geometry.coordinates[0],
-      d.geometry.coordinates[1]*1.13
+      d.geometry.coordinates[1]*1.23
         ]) + ")";}
       })
-      .attr("r",2)
+      .attr("r",function(d,i){
+          return Math.pow(d.properties.mass,.3)/7.5+1
+      })
       .attr("fill","#5A5A5A")
       .attr("stroke","white")
       .attr("stroke-width", "0.3")
