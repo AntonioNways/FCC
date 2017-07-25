@@ -24957,23 +24957,6 @@ var projection = d3.geo.equirectangular() //tells d3 that we are using a rectang
 var path = d3.geo.path()
     .projection(projection);
 
-//add zoom
-var zoom = d3.behavior.zoom()
-  .scaleExtent([1, 20])
-  .on("zoom", zoomed);
-
-// This invisible rect for zoom
-var rect = svg.append("rect")
-  .attr("width", width)
-  .attr("height", height)
-  .style("fill", "none")
-  .style("pointer-events", "all")
-  .call(zoom);
-
-function zoomed(){
-  g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-}
-///
  var worldMap = g.append("image")
       .attr("xlink:href","https://openclipart.org/image/2400px/svg_to_png/1733/molumen-world-map-1.png")
       .attr("x", 5)
@@ -24999,7 +24982,27 @@ function zoomed(){
       .attr("r",function(d,i){
           return Math.pow(d.properties.mass,.3)/7.5+1
       })
-      .attr("fill","#5A5A5A")
+      .attr("fill",function(d,i){
+        if(d.properties.recclass[0]=="C"){
+          return "#9933ff"
+        }
+        if(d.properties.recclass[0]=="I"){
+          return "#660033"
+        }
+        if(d.properties.recclass[0]=="H"){
+          return "#996600"
+        }
+        if(d.properties.recclass[0]=="L"){
+          return "#0000cc"
+        }
+        if(d.properties.recclass[0]=="E"){
+          return "#ffff00"
+        }
+        if(d.properties.recclass[0]=="S"){
+          return "#00ffcc"
+        }
+          return "green"
+      })
       .attr("stroke","white")
       .attr("stroke-width", "0.3")
       //tooltip function here
@@ -25007,8 +25010,12 @@ function zoomed(){
        toolT.transition()
          .duration(300)
          .style("opacity", .9);
-       toolT.html("here")
-         .style("left", (d3.event.pageX)-55 + "px")
+       toolT.html("Name: <small>"+d.properties.name+"</small></br>"+
+       "Mass: <small>"+d.properties.mass+"</small></br>"+
+       "Recclass: <small>"+d.properties.recclass+"</small></br>"+
+       "Year: <small>"+d.properties.year+"</small></br>"+
+       "Fall: <small>"+d.properties.fall+"</small></br>")
+         .style("left", (d3.event.pageX)+20 + "px")
          .style("top", (d3.event.pageY)-88 + "px");
        })
      .on("mouseout", function(d) {
@@ -25016,3 +25023,16 @@ function zoomed(){
          .duration(500)
          .style("opacity", 0);
        });
+
+//add zoom
+var zoom = d3.behavior.zoom()
+  .scaleExtent([1, 20])
+  .on("zoom", zoomed);
+
+// This invisible rect for zoom
+zoom(svg)
+
+function zoomed(){
+  g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+///
